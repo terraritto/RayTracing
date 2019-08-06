@@ -20,7 +20,7 @@ public:
 	Vector3D operator*(const double a) const;
 	Vector3D operator/(const double a) const;
 	Vector3D operator+(const Vector3D& v) const;
-	Vector3D operator+=(const Vector3D& v);
+	Vector3D& operator+=(const Vector3D& v);
 	Vector3D operator-(const Vector3D& v) const;
 	double operator*(const Vector3D& b) const;
 	Vector3D operator^(const Vector3D& v) const;
@@ -30,3 +30,5 @@ public:
 	void Normalize();
 	Vector3D& hat();
 };
+
+Vector3D operator*(const double a, const Vector3D& v);

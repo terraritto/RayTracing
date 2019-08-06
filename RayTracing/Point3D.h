@@ -20,3 +20,5 @@ public:
 	double LengthSq(const Point3D& p) const;
 	double Length(const Point3D& p) const;
 };
+
+Point3D operator*(double a, const Point3D& p);
