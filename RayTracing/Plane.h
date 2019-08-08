@@ -15,7 +15,6 @@ public:
 
 	virtual std::shared_ptr<Plane> Clone() const;
 	virtual bool hit(const class Ray& ray, double& tMin, class ShadeRec& sr) const;
-	
 private:
 	Point3D mPoint;
 	Normal mNormal;

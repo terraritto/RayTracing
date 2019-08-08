@@ -30,8 +30,7 @@ Plane::Plane(const Plane& plane)
 
 std::shared_ptr<Plane> Plane::Clone() const
 {
-	std::shared_ptr<Plane> plane = std::make_shared<Plane>(*this);
-	return std::move(plane);
+	return std::make_shared<Plane>(*this);
 }
 
 Plane& Plane::operator=(const Plane& rhs)
