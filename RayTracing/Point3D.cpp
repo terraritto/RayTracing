@@ -1,6 +1,5 @@
 #include <cmath>
 #include "Point3D.h"
-#include "Vector3D.h"
 
 Point3D::Point3D()
 	: mPosX(0)
@@ -58,12 +57,12 @@ inline Point3D Point3D::operator-() const
 	return (Point3D(-mPosX, -mPosY, -mPosZ));
 }
 
-inline Vector3D Point3D::operator-(const Point3D& p) const
+Vector3D Point3D::operator-(const Point3D& p) const
 {
 	return (Vector3D(mPosX - p.mPosX, mPosY - p.mPosY, mPosZ - p.mPosZ));
 }
 
-inline Point3D Point3D::operator+(const Vector3D& v) const
+Point3D Point3D::operator+(const Vector3D& v) const
 {
 	return (Point3D(mPosX + v.mPosX, mPosY + v.mPosY, mPosZ + v.mPosZ));
 }
@@ -89,7 +88,7 @@ double Point3D::Length(const Point3D& p) const
 }
 
 //non-member
-inline Point3D operator*(double a, const Point3D& p)
+Point3D operator*(double a, const Point3D& p)
 {
 	return (Point3D(a * p.mPosX, a * p.mPosY, a * p.mPosZ));
 }

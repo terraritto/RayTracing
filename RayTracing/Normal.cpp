@@ -132,7 +132,7 @@ inline Vector3D operator-(const Vector3D& v, const Normal& n)
 	return (Vector3D(v.mPosX - n.mPosX, v.mPosY - n.mPosY, v.mPosZ - n.mPosZ));
 }
 
-inline double operator*(const Vector3D& v, const Normal& n)
+double operator*(const Vector3D& v, const Normal& n)
 {
 	return(v.mPosX * n.mPosX + v.mPosY * n.mPosY + v.mPosZ * n.mPosZ);
 }

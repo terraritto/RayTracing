@@ -91,17 +91,17 @@ inline Vector3D Vector3D::operator-() const
 	return (Vector3D(-mPosX, -mPosY, -mPosZ));
 }
 
-inline Vector3D Vector3D::operator*(const double a) const
+Vector3D Vector3D::operator*(const double a) const
 {
 	return (Vector3D(mPosX * a, mPosY * a, mPosZ * a));
 }
 
-inline Vector3D Vector3D::operator/(const double a) const
+Vector3D Vector3D::operator/(const double a) const
 {
 	return (Vector3D(mPosX / a, mPosY / a, mPosZ / a));
 }
 
-inline Vector3D Vector3D::operator+(const Vector3D& v) const
+Vector3D Vector3D::operator+(const Vector3D& v) const
 {
 	return (Vector3D(mPosX + v.mPosX, mPosY + v.mPosY, mPosZ + v.mPosZ));
 }
@@ -119,7 +119,7 @@ inline Vector3D Vector3D::operator-(const Vector3D& v) const
 	return (Vector3D(mPosX - v.mPosX, mPosY - v.mPosY, mPosZ - v.mPosZ));
 }
 
-inline double Vector3D::operator*(const Vector3D& v) const
+double Vector3D::operator*(const Vector3D& v) const
 {
 	return (mPosX * v.mPosX + mPosY * v.mPosY + mPosZ * v.mPosZ);
 }
