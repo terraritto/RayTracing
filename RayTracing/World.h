@@ -15,6 +15,7 @@ public:
 	std::shared_ptr<Tracer> mTracerPtr;
 
 	World();
+	~World();
 	
 	void Build();
 	void RenderScene() const;
