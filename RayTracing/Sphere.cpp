@@ -51,19 +51,19 @@ std::shared_ptr<Sphere> Sphere::Clone() const
 	return std::make_shared<Sphere>((*this));
 }
 
-inline void Sphere::SetCenter(const Point3D& c)
+void Sphere::SetCenter(const Point3D& c)
 {
 	mCenter = c;
 }
 
-inline void Sphere::SetCenter(const double x, const double y, const double z)
+void Sphere::SetCenter(const double x, const double y, const double z)
 {
 	mCenter.mPosX = x;
 	mCenter.mPosY = y;
 	mCenter.mPosZ = z;
 }
 
-inline void Sphere::SetRadius(const double r)
+void Sphere::SetRadius(const double r)
 {
 	mRadius = r;
 }

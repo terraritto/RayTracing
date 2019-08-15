@@ -9,11 +9,11 @@ class Tracer
 {
 public:
 	Tracer();
-	Tracer(std::shared_ptr<World> world);
+	Tracer(World* world);
 	virtual ~Tracer();
 
 	virtual RGBColor TraceRay(const Ray& ray) const;
 	virtual RGBColor TraceRay(const Ray ray, const int depth) const;
 protected:
-	std::shared_ptr<World> mWorld;
+	World* mWorld;
 };

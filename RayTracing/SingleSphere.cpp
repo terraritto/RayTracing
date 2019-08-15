@@ -8,7 +8,7 @@ SingleSphere::SingleSphere()
 
 }
 
-SingleSphere::SingleSphere(std::shared_ptr<World> world)
+SingleSphere::SingleSphere(World* world)
 	: Tracer(world)
 {
 

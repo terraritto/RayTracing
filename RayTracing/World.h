@@ -4,7 +4,7 @@
 #include "Sphere.h"
 #include "Tracer.h"
 #include <memory>
-
+class Tracer;
 
 class World
 {
