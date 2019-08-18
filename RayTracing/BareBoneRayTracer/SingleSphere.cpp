@@ -18,9 +18,10 @@ SingleSphere::~SingleSphere()
 {
 
 }
-
+/*
 RGBColor SingleSphere::TraceRay(const Ray& ray) const
 {
+	
 	ShadeRec sr(*mWorld);
 	double t;
 	if (mWorld->mSphere.hit(ray, t, sr))
@@ -31,4 +32,5 @@ RGBColor SingleSphere::TraceRay(const Ray& ray) const
 	{
 		return (black);
 	}
-}
+	
+}*/

@@ -15,3 +15,8 @@ GeometricObject::~GeometricObject()
 {
 
 }
+
+RGBColor GeometricObject::GetColor()
+{
+	return mColor;
+}

@@ -8,5 +8,5 @@ public:
 	SingleSphere(World* world);
 
 	virtual ~SingleSphere();
-	RGBColor TraceRay(const Ray& ray) const override;
+	//RGBColor TraceRay(const Ray& ray) const override;
 };

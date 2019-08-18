@@ -1,4 +1,3 @@
-#include "World.h"
 #include "ShadeRec.h"
 #include "Constants.h"
 

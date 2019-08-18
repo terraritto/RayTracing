@@ -4,6 +4,7 @@
 #include "RGBColor.h"
 #include "World.h"
 #include <memory>
+class World;
 
 class Tracer
 {

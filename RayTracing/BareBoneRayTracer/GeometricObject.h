@@ -10,7 +10,8 @@ public:
 	virtual ~GeometricObject();
 
 	virtual bool hit(const class Ray& ray, double& t, class ShadeRec& s) const = 0;
-
+	RGBColor GetColor();
+	void SetColor(RGBColor color) { mColor = color; };
 protected:
 	RGBColor mColor;
 };
