@@ -79,7 +79,8 @@ void World::RenderScene() const
 }
 */
 
-//Random Sampling
+//-----Random Sampling-----
+/*
 void World::RenderScene() const
 {
 	RGBColor pixelColor;
@@ -111,6 +112,48 @@ void World::RenderScene() const
 			}
 
 			pixelColor /= n;
+			DisplayPixel(r, c, pixelColor);
+		}
+	}
+	WaitTimer(10000);
+}
+*/
+
+//Jittered Sampling
+void World::RenderScene() const
+{
+	RGBColor pixelColor;
+	Ray ray;
+	double zw = 100.0;
+	int n = static_cast<int>(sqrt(mViewPlane.mNumSamples));
+	Point2D pp;
+
+	OpenWindow(mViewPlane.mHRes, mViewPlane.mVRes); //pixelsize = 1.0,so don't have to mult pixelSize;
+	ray.mDirection = Vector3D(0, 0, -1);
+
+	//random
+	std::random_device rd;
+	std::mt19937 mt(rd());
+	std::uniform_real_distribution<float> floatRand(0.0f, 1.0f);
+
+	for (int r = 0; r < mViewPlane.mVRes; r++) //up
+	{
+		for (int c = 0; c <= mViewPlane.mHRes; c++) //across
+		{
+			pixelColor = black;
+
+			for (int p = 0; p < n; p++)
+			{
+				for (int q = 0; q < n; q++)
+				{
+					pp.mPosX = mViewPlane.mPixelSize * (c - 0.5 * mViewPlane.mHRes + (q + floatRand(mt)) / n);
+					pp.mPosY = mViewPlane.mPixelSize * (r - 0.5 * mViewPlane.mVRes + (p + floatRand(mt)) / n);
+					ray.mOrigin = Point3D(pp.mPosX, pp.mPosY, zw);
+					pixelColor += mTracerPtr->TraceRay(ray);
+				}
+			}
+
+			pixelColor /= mViewPlane.mNumSamples;
 			DisplayPixel(r, c, pixelColor);
 		}
 	}
