@@ -1,7 +1,9 @@
 #include "Sampler.h"
+#include "..//Maths//Constants.h"
 #include <random>
 #include <numeric>
 #include <algorithm>
+#include <cmath>
 
 Sampler::Sampler()
 	: mNumSamples(1)
@@ -116,6 +118,21 @@ Point2D Sampler::SampleUnitSquare()
 
 }
 
+Point2D Sampler::SampleUnitDisk()
+{
+	//random
+	std::random_device rd;
+	std::mt19937 mt(rd());
+
+	if (mCount % mNumSamples == 0)
+	{
+		mJump = (mt() % mNumSets) * mNumSamples;
+	}
+
+	return mDiskSamples[mJump + mShuffledIndices[mJump + mCount++ % mNumSamples]];
+
+}
+
 void Sampler::ShuffleXCoordinates()
 {
 	std::random_device rd;
@@ -148,4 +165,65 @@ void Sampler::ShuffleYCoordinates()
 			mSamples[target].mPosY = temp;
 		}
 	}
+}
+
+void Sampler::MapSamplesToUnitDisk()
+{
+	int size = mSamples.size();
+	float r, phi;
+	Point2D sp;
+	
+	mDiskSamples.reserve(size);
+
+	for (int j = 0; j < size; j++)
+	{
+		sp.mPosX = 2.0 * mSamples[j].mPosX - 1.0;
+		sp.mPosY = 2.0 * mSamples[j].mPosY - 1.0;
+
+		if (sp.mPosX > -sp.mPosY)
+		{
+			if (sp.mPosX > sp.mPosY)
+			{
+				//section 1
+				r = sp.mPosX;
+				phi = sp.mPosY / sp.mPosX;
+			}
+			else
+			{
+				//section 2
+				r = sp.mPosY;
+				phi = 2 - sp.mPosX / sp.mPosY;
+			}
+		}
+		else
+		{
+			if (sp.mPosX < sp.mPosY)
+			{
+				//section 3
+				r = -sp.mPosX;
+				phi = 4 + sp.mPosY / sp.mPosX;
+			}
+			else
+			{
+				//section 4
+				r = -sp.mPosY;
+
+				if (sp.mPosY != 0.0)
+				{
+					phi = 6 - sp.mPosX / sp.mPosY;
+				}
+				else
+				{
+					phi = 0.0;
+				}
+			}
+		}
+
+		phi *= PI / 4.0;
+
+		mDiskSamples[j].mPosX = r * std::cos(phi);
+		mDiskSamples[j].mPosY = r * std::sin(phi);
+	}
+
+	mSamples.erase(mSamples.begin(), mSamples.end());
 }

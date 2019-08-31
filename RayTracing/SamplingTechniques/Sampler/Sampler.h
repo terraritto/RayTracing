@@ -21,11 +21,17 @@ public:
 	int GetNumSamples();
 	void ShuffleXCoordinates();
 	void ShuffleYCoordinates();
+
+	//convert disk from square
+	void MapSamplesToUnitDisk();
+
 	Point2D SampleUnitSquare();
+	Point2D SampleUnitDisk();
 protected:
 	int mNumSamples;
 	int mNumSets;
 	std::vector<Point2D> mSamples;
+	std::vector<Point2D> mDiskSamples;
 	std::vector<int> mShuffledIndices;
 	unsigned long mCount;
 	int mJump;
