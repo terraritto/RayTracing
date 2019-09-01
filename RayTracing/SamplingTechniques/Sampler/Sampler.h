@@ -1,5 +1,6 @@
 #pragma once
 #include "../Maths/Point2D.h"
+#include "../Maths/Point3D.h"
 #include <vector>
 #include <memory>
 
@@ -24,14 +25,18 @@ public:
 
 	//convert disk from square
 	void MapSamplesToUnitDisk();
+	//convert hemisphere from spuare
+	void MapSamplesToHemisphere(const float p);
 
 	Point2D SampleUnitSquare();
 	Point2D SampleUnitDisk();
+	Point3D SampleHemisphere();
 protected:
 	int mNumSamples;
 	int mNumSets;
 	std::vector<Point2D> mSamples;
 	std::vector<Point2D> mDiskSamples;
+	std::vector<Point3D> mHemisphereSamples;
 	std::vector<int> mShuffledIndices;
 	unsigned long mCount;
 	int mJump;

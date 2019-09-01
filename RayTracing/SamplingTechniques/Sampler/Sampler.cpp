@@ -1,5 +1,6 @@
 #include "Sampler.h"
 #include "..//Maths//Constants.h"
+#include "..//Maths//Point3D.h"
 #include <random>
 #include <numeric>
 #include <algorithm>
@@ -133,6 +134,21 @@ Point2D Sampler::SampleUnitDisk()
 
 }
 
+Point3D Sampler::SampleHemisphere()
+{
+	//random
+	std::random_device rd;
+	std::mt19937 mt(rd());
+
+	if (mCount % mNumSamples == 0)
+	{
+		mJump = (mt() % mNumSets) * mNumSamples;
+	}
+
+	return mHemisphereSamples[mJump + mShuffledIndices[mJump + mCount++ % mNumSamples]];
+
+}
+
 void Sampler::ShuffleXCoordinates()
 {
 	std::random_device rd;
@@ -226,4 +242,23 @@ void Sampler::MapSamplesToUnitDisk()
 	}
 
 	mSamples.erase(mSamples.begin(), mSamples.end());
+}
+
+void Sampler::MapSamplesToHemisphere(const float e)
+{
+	int size = mSamples.size();
+	mHemisphereSamples.reserve(mNumSamples * mNumSets);
+
+	for (int j = 0; j < size; j++)
+	{
+		float cosPhi = std::cos(2.0 * PI * mSamples[j].mPosX);
+		float sinPhi = std::sin(2.0 * PI * mSamples[j].mPosX);
+		float cosTheta = std::pow((1.0 - mSamples[j].mPosY), 1.0 / (e + 1.0));
+		float sinTheta = std::sqrt(1.0 - cosTheta * cosTheta);
+		float pu = sinTheta * cosPhi;
+		float pv = sinTheta * sinPhi;
+		float pw = cosTheta;
+
+		mHemisphereSamples.emplace_back(Point3D(pu, pv, pw));
+	}
 }
