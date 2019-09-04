@@ -31,5 +31,12 @@ Second, add three new techniques about sampling.
 * Hammersley Sampling  
 
 Third, add convert sampling method.  
-* square -> disk (Shirley's concentric map
+* square -> disk (Shirley's concentric map)
 * square -> hemispehre
+
+## Perspective Viewing
+I add RenderPerspective in SamplingTechniques at world class.  
+It's axis-aligned perspective viewing, so you must set value about eye and d.  
+eye is center of projection and d is distance between eye and center of viewplane.  
+Their values require to make direction and origin about ray.  
+default is eye = 100, d = 100
