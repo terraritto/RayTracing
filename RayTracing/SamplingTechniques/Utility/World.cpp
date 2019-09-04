@@ -8,8 +8,9 @@
 //Object
 #include "../Objects/Plane.h"
 #include "../Objects/MultipleObjects.h"
-//World
+//Utility
 #include "World.h"
+#include "ShadeRec.h"
 //Sampler
 #include "../Sampler/PureRandom.h"
 #include "../Sampler/Regular.h"
@@ -88,6 +89,37 @@ void World::RenderScene() const
 			}
 
 			pixelColor /= mViewPlane.mNumSamples;
+			DisplayPixel(r, c, pixelColor);
+		}
+	}
+	WaitTimer(10000);
+}
+
+//render perspective ver.
+//if use it, you must set appropriate values about eye and d.
+void World::RenderPerspective() const
+{
+	RGBColor pixelColor;
+	Ray ray;
+
+	//Perspective-specific
+	double eye = 100;
+	double d = -100;
+
+	OpenWindow(mViewPlane.mHRes, mViewPlane.mVRes); //pixelsize = 1.0,so don't have to mult pixelSize;
+	ray.mOrigin = Point3D(0.0, 0.0, eye);
+
+	for (int r = 0; r < mViewPlane.mVRes; r++) //up
+	{
+		for (int c = 0; c <= mViewPlane.mHRes; c++) //across
+		{
+			ray.mDirection = Vector3D(
+				mViewPlane.mPixelSize * (c - 0.5 * (mViewPlane.mHRes - 1.0)),
+				mViewPlane.mPixelSize * (r - 0.5 * (mViewPlane.mVRes - 1.0)),
+				-d
+			);
+			ray.mDirection.Normalize();
+			pixelColor = mTracerPtr->TraceRay(ray);
 			DisplayPixel(r, c, pixelColor);
 		}
 	}
