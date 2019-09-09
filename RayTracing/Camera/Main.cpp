@@ -7,6 +7,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	world.Build();
 	world.mCameraPtr->RenderScene(world);
 
+	WaitTimer(10000);
+
 	DxLib_End();
 	return 0;
 }

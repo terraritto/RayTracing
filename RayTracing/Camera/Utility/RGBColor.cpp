@@ -65,12 +65,12 @@ RGBColor& RGBColor::operator+=(const RGBColor& c)
 	return *this;
 }
 
-inline RGBColor RGBColor::operator*(const float a) const
+RGBColor RGBColor::operator*(const float a) const
 {
 	return (RGBColor(mRed * a, mBlue * a, mGreen * a));
 }
 
-inline RGBColor& RGBColor::operator*=(const float a)
+RGBColor& RGBColor::operator*=(const float a)
 {
 	mRed *= a;
 	mGreen *= a;
@@ -91,12 +91,12 @@ RGBColor& RGBColor::operator/=(const float a)
 	return *this;
 }
 
-inline RGBColor RGBColor::operator*(const RGBColor& c) const
+RGBColor RGBColor::operator*(const RGBColor& c) const
 {
 	return (RGBColor(mRed * c.mRed, mGreen * c.mGreen, mBlue * c.mBlue));
 }
 
-inline bool RGBColor::operator==(const RGBColor& c) const
+bool RGBColor::operator==(const RGBColor& c) const
 {
 	return (mRed == c.mRed && mGreen == c.mGreen && mBlue == c.mBlue);
 }

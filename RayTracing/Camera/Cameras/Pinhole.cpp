@@ -70,6 +70,9 @@ void Pinhole::RenderScene(const World& w)
 				pp.mPosX = vp.mPixelSize * (c - 0.5 * vp.mHRes + sp.mPosX);
 				pp.mPosY = vp.mPixelSize * (r - 0.5 * vp.mVRes + sp.mPosY);
 				ray.mDirection = GetDirection(pp);
+				// TraceRay output black pixel now
+				// so if you run any programs, image is all black.
+				// if you use TraceRay(ray);, you can output ideal images. 
 				L += w.mTracerPtr->TraceRay(ray, depth);
 			}
 			L /= vp.mNumSamples;

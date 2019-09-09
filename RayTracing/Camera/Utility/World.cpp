@@ -7,7 +7,8 @@
 #include "../Maths/Ray.h"
 //Object
 #include "../Objects/Plane.h"
-#include "../Objects/MultipleObjects.h"
+//Tracer
+#include "../Tracer/MultipleObjects.h"
 //Utility
 #include "World.h"
 //Sampler
@@ -17,6 +18,8 @@
 #include "../Sampler/MultiJittered.h"
 #include "../Sampler/Hammersley.h"
 #include "../Sampler/NRooks.h"
+//Camera
+#include "../Cameras/Pinhole.h"
 //DX library
 #include "DxLib.h"
 //STL
@@ -41,13 +44,26 @@ void World::Build()
 {
 	int numSamples = 25;
 
+	//set View Plane
 	mViewPlane.SetHRes(200);
 	mViewPlane.SetVRes(200);
-	mViewPlane.SetSampler(std::move(std::make_shared<Hammersley>(numSamples)));
+	mViewPlane.SetSampler(std::move(std::make_shared<MultiJittered>(numSamples)));
 
+	//set backgroundColor
 	mBackGroundColor = black;
+
+	//set Tracer
 	mTracerPtr = std::make_shared<MultipleObjects>(this);
 
+	//set camera
+	std::shared_ptr<Pinhole> pinholePtr = std::make_shared<Pinhole>();
+	pinholePtr->SetEye(1500, 0, 0);
+	pinholePtr->SetLookAt(0, 0, 0);
+	pinholePtr->SetViewDistance(400);
+	pinholePtr->ComputeUVW();
+	SetCamera(pinholePtr);
+
+	//set object
 	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>();
 	sphere->SetCenter(0, 0, 0);
 	sphere->SetRadius(85.0);
@@ -150,6 +166,7 @@ ShadeRec World::HitBareBonesObjects(const Ray& ray)
 	return (sr);
 }
 
+
 void World::OpenWindow(const int hres, const int vres) const
 {
 	ChangeWindowMode(TRUE);
@@ -171,4 +188,16 @@ void World::DisplayPixel(const int row, const int column, const RGBColor& rawCol
 	int y = mViewPlane.mVRes - row - 1;
 
 	DrawPixel(x, y, GetColor(rawColor.mRed *255, rawColor.mGreen * 255, rawColor.mBlue * 255));
+}
+
+//specific camera
+void World::SetCamera(std::shared_ptr<Camera> camera)
+{
+	if (mCameraPtr)
+	{
+		mCameraPtr.reset();
+		mCameraPtr = nullptr;
+	}
+
+	mCameraPtr = camera;
 }

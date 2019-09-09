@@ -86,7 +86,7 @@ Vector3D& Vector3D::operator=(const Point3D& rhs)
 	return (*this);
 }
 
-inline Vector3D Vector3D::operator-() const
+Vector3D Vector3D::operator-() const
 {
 	return (Vector3D(-mPosX, -mPosY, -mPosZ));
 }
@@ -106,7 +106,7 @@ Vector3D Vector3D::operator+(const Vector3D& v) const
 	return (Vector3D(mPosX + v.mPosX, mPosY + v.mPosY, mPosZ + v.mPosZ));
 }
 
-inline Vector3D& Vector3D::operator+=(const Vector3D& v)
+Vector3D& Vector3D::operator+=(const Vector3D& v)
 {
 	mPosX += v.mPosX;
 	mPosY += v.mPosY;
@@ -114,7 +114,7 @@ inline Vector3D& Vector3D::operator+=(const Vector3D& v)
 	return (*this);
 }
 
-inline Vector3D Vector3D::operator-(const Vector3D& v) const
+Vector3D Vector3D::operator-(const Vector3D& v) const
 {
 	return (Vector3D(mPosX - v.mPosX, mPosY - v.mPosY, mPosZ - v.mPosZ));
 }
@@ -124,12 +124,12 @@ double Vector3D::operator*(const Vector3D& v) const
 	return (mPosX * v.mPosX + mPosY * v.mPosY + mPosZ * v.mPosZ);
 }
 
-inline Vector3D Vector3D::operator^(const Vector3D& v) const
+Vector3D Vector3D::operator^(const Vector3D& v) const
 {
 	return (Vector3D(mPosY * v.mPosZ - mPosZ * v.mPosY, mPosZ * v.mPosX - mPosX * v.mPosZ, mPosX * v.mPosY - mPosY * v.mPosX));
 }
 
-inline double Vector3D::LengthSq()
+double Vector3D::LengthSq()
 {
 	return (std::pow(mPosX,2) + std::pow(mPosY,2) + std::pow(mPosZ,2));
 }

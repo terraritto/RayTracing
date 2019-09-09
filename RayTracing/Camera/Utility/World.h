@@ -10,6 +10,8 @@
 #include <memory>
 #include <vector>
 class Tracer;
+class Camera;
+class ShadeRec;
 
 class World
 {
@@ -30,4 +32,6 @@ public:
 	ShadeRec HitBareBonesObjects(const Ray& ray);
 	void OpenWindow(const int hres, const int vres) const;
 	void DisplayPixel(const int row, const int column, const RGBColor& pixelColor) const;
+
+	void SetCamera(std::shared_ptr<Camera> camera);
 };
