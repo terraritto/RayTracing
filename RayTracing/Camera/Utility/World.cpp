@@ -19,6 +19,7 @@
 #include "../Sampler/Hammersley.h"
 #include "../Sampler/NRooks.h"
 //Camera
+#include "..//Cameras//Orthographic.h"
 #include "../Cameras/Pinhole.h"
 //DX library
 #include "DxLib.h"
@@ -56,12 +57,21 @@ void World::Build()
 	mTracerPtr = std::make_shared<MultipleObjects>(this);
 
 	//set camera
+	/*pinhole*/
 	std::shared_ptr<Pinhole> pinholePtr = std::make_shared<Pinhole>();
 	pinholePtr->SetEye(1500, 0, 0);
 	pinholePtr->SetLookAt(0, 0, 0);
 	pinholePtr->SetViewDistance(400);
+	pinholePtr->SetZoom(1.0);
 	pinholePtr->ComputeUVW();
 	SetCamera(pinholePtr);
+	/**/
+	
+	/* ortho
+	std::shared_ptr<Orthographic> orthoPtr = std::make_shared<Orthographic>();
+	orthoPtr->SetZWindow(500);
+	SetCamera(orthoPtr);
+	*/
 
 	//set object
 	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>();
@@ -69,76 +79,6 @@ void World::Build()
 	sphere->SetRadius(85.0);
 	sphere->SetColor(RGBColor(1, 1, 0));
 	AddObject(sphere);
-}
-
-void World::RenderScene() const
-{
-	RGBColor pixelColor;
-	Ray ray;
-	double zw = 100.0;
-	int n = static_cast<int>(sqrt(mViewPlane.mNumSamples));
-	Point2D pp; // sample point in [0,1] x [0,1]
-	Point2D sp; // sample point on a pixel
-
-	OpenWindow(mViewPlane.mHRes, mViewPlane.mVRes); //pixelsize = 1.0,so don't have to mult pixelSize;
-	ray.mDirection = Vector3D(0, 0, -1);
-
-	//random
-	std::random_device rd;
-	std::mt19937 mt(rd());
-	std::uniform_real_distribution<float> floatRand(0.0f, 1.0f);
-
-	for (int r = 0; r < mViewPlane.mVRes; r++) //up
-	{
-		for (int c = 0; c <= mViewPlane.mHRes; c++) //across
-		{
-			pixelColor = black;
-
-			for (int j = 0; j < mViewPlane.mNumSamples; j++)
-			{
-				sp = mViewPlane.mSamplerPtr->SampleUnitSquare();
-				pp.mPosX = mViewPlane.mPixelSize * (c - 0.5 * mViewPlane.mHRes + sp.mPosX);
-				pp.mPosY = mViewPlane.mPixelSize * (r - 0.5 * mViewPlane.mVRes + sp.mPosY);
-				ray.mOrigin = Point3D(pp.mPosX, pp.mPosY, zw);
-				pixelColor += mTracerPtr->TraceRay(ray);
-			}
-
-			pixelColor /= mViewPlane.mNumSamples;
-			DisplayPixel(r, c, pixelColor);
-		}
-	}
-	WaitTimer(10000);
-}
-
-//render perspective ver.
-//if use it, you must set appropriate values about eye and d.
-void World::RenderPerspective() const
-{
-	RGBColor pixelColor;
-	Ray ray;
-
-	//Perspective-specific
-	double eye = 100;
-	double d = -100;
-
-	OpenWindow(mViewPlane.mHRes, mViewPlane.mVRes); //pixelsize = 1.0,so don't have to mult pixelSize;
-	ray.mOrigin = Point3D(0.0, 0.0, eye);
-
-	for (int r = 0; r < mViewPlane.mVRes; r++) //up
-	{
-		for (int c = 0; c <= mViewPlane.mHRes; c++) //across
-		{
-			ray.mDirection = Vector3D(
-				mViewPlane.mPixelSize * (c - 0.5 * (mViewPlane.mHRes - 1.0)),
-				mViewPlane.mPixelSize * (r - 0.5 * (mViewPlane.mVRes - 1.0)),
-				-d
-			);
-			ray.mDirection.Normalize();
-			pixelColor = mTracerPtr->TraceRay(ray);
-			DisplayPixel(r, c, pixelColor);
-		}
-	}
-	WaitTimer(10000);
 }
 
 void World::AddObject(std::shared_ptr<GeometricObject> objectPtr)

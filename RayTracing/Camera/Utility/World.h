@@ -26,8 +26,6 @@ public:
 	~World();
 	
 	void Build();
-	void RenderScene() const;
-	void RenderPerspective() const;
 	void AddObject(std::shared_ptr<GeometricObject> objectPtr);
 	ShadeRec HitBareBonesObjects(const Ray& ray);
 	void OpenWindow(const int hres, const int vres) const;

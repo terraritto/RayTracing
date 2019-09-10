@@ -57,6 +57,23 @@ void Camera::ComputeUVW()
 	mU = mUp ^ mW;
 	mU.Normalize();
 	mV = mW ^ mU;
+
+	// process about singularity
+	if (mEye.mPosX == mLookAt.mPosX && mEye.mPosZ == mLookAt.mPosZ)
+	{
+		if (mEye.mPosY > mLookAt.mPosY)
+		{
+			mU = Vector3D(0, 0, 1);
+			mV = Vector3D(1, 0, 0);
+			mW = Vector3D(0, 0, 1);
+		}
+		else if (mEye.mPosY < mLookAt.mPosY)
+		{
+			mU = Vector3D(1, 0, 0);
+			mV = Vector3D(0, 0, 1);
+			mW = Vector3D(0, -1, 0);
+		}
+	}
 }
 
 //setter
