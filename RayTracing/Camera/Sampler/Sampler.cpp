@@ -189,7 +189,7 @@ void Sampler::MapSamplesToUnitDisk()
 	float r, phi;
 	Point2D sp;
 	
-	mDiskSamples.reserve(size);
+	mDiskSamples.resize(size);
 
 	for (int j = 0; j < size; j++)
 	{

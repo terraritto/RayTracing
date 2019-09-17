@@ -20,7 +20,8 @@
 #include "../Sampler/NRooks.h"
 //Camera
 #include "..//Cameras//Orthographic.h"
-#include "../Cameras/Pinhole.h"
+#include "..//Cameras//Pinhole.h"
+#include "..//Cameras//ThinLens.h"
 //DX library
 #include "DxLib.h"
 //STL
@@ -43,11 +44,12 @@ World::~World()
 
 void World::Build()
 {
-	int numSamples = 25;
+	int numSamples = 2;
 
 	//set View Plane
-	mViewPlane.SetHRes(200);
-	mViewPlane.SetVRes(200);
+	mViewPlane.SetHRes(1000);
+	mViewPlane.SetVRes(1000);
+	mViewPlane.SetPixelSize(1.0);
 	mViewPlane.SetSampler(std::move(std::make_shared<MultiJittered>(numSamples)));
 
 	//set backgroundColor
@@ -55,9 +57,10 @@ void World::Build()
 
 	//set Tracer
 	mTracerPtr = std::make_shared<MultipleObjects>(this);
+	
 
 	//set camera
-	/*pinhole*/
+	/*pinhole
 	std::shared_ptr<Pinhole> pinholePtr = std::make_shared<Pinhole>();
 	pinholePtr->SetEye(1500, 0, 0);
 	pinholePtr->SetLookAt(0, 0, 0);
@@ -65,7 +68,7 @@ void World::Build()
 	pinholePtr->SetZoom(1.0);
 	pinholePtr->ComputeUVW();
 	SetCamera(pinholePtr);
-	/**/
+	*/
 	
 	/* ortho
 	std::shared_ptr<Orthographic> orthoPtr = std::make_shared<Orthographic>();
@@ -73,11 +76,27 @@ void World::Build()
 	SetCamera(orthoPtr);
 	*/
 
+	/*ThinLens*/
+	std::shared_ptr<ThinLens> thinLensPtr = std::make_shared<ThinLens>();
+	thinLensPtr->SetSampler(std::move(std::make_shared<MultiJittered>(numSamples)));
+	thinLensPtr->SetEye(500, 0, 0);
+	thinLensPtr->SetLookAt(0, 0, 0);
+	thinLensPtr->SetFocalLength(500.0f);
+	thinLensPtr->SetViewDistance(250.0f);
+	thinLensPtr->ComputeUVW();
+	SetCamera(thinLensPtr);
+
 	//set object
 	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>();
 	sphere->SetCenter(0, 0, 0);
-	sphere->SetRadius(85.0);
+	sphere->SetRadius(250.0);
 	sphere->SetColor(RGBColor(1, 1, 0));
+	AddObject(sphere);
+
+	sphere = std::make_shared<Sphere>();
+	sphere->SetCenter(-100, 0, 500);
+	sphere->SetRadius(100.0);
+	sphere->SetColor(RGBColor(1, 0, 0));
 	AddObject(sphere);
 }
 
