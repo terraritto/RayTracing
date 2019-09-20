@@ -23,6 +23,7 @@
 #include "..//Cameras//Pinhole.h"
 #include "..//Cameras//ThinLens.h"
 #include "..//Cameras//FishEye.h"
+#include "..//Cameras//Spherical.h"
 //DX library
 #include "DxLib.h"
 //STL
@@ -89,13 +90,23 @@ void World::Build()
 	SetCamera(thinLensPtr);
 	*/
 
-	/*FishEye*/
+	/*FishEye
 	std::shared_ptr<FishEye> fishEyePtr = std::make_shared<FishEye>();
 	fishEyePtr->SetEye(1500, 0, 0);
 	fishEyePtr->SetLookAt(0, 0, 0);
 	fishEyePtr->SetPsiMax(0);
 	fishEyePtr->ComputeUVW();
 	SetCamera(fishEyePtr);
+	*/
+
+	/*Spherical*/
+	std::shared_ptr<Spherical> sphericalPtr = std::make_shared<Spherical>();
+	sphericalPtr->SetEye(1500, 0, 0);
+	sphericalPtr->SetLookAt(0, 0, 0);
+	sphericalPtr->SetPsiMax(90);
+	sphericalPtr->SetLambdaMax(180);
+	sphericalPtr->ComputeUVW();
+	SetCamera(sphericalPtr);
 	
 	//set object
 	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>();
