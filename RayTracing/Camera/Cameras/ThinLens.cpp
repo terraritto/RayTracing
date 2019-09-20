@@ -92,7 +92,7 @@ void ThinLens::RenderScene(const World& w)
 
 				ray.mOrigin = mEye + lp.mPosX * mU + lp.mPosY * mV;
 				ray.mDirection = GetDirection(pp, lp);
-				L += w.mTracerPtr->TraceRay(ray);
+				L += w.mTracerPtr->TraceRay(ray,depth);
 			}
 
 			L /= vp.mNumSamples;

@@ -22,6 +22,7 @@
 #include "..//Cameras//Orthographic.h"
 #include "..//Cameras//Pinhole.h"
 #include "..//Cameras//ThinLens.h"
+#include "..//Cameras//FishEye.h"
 //DX library
 #include "DxLib.h"
 //STL
@@ -60,6 +61,7 @@ void World::Build()
 	
 
 	//set camera
+
 	/*pinhole
 	std::shared_ptr<Pinhole> pinholePtr = std::make_shared<Pinhole>();
 	pinholePtr->SetEye(1500, 0, 0);
@@ -76,7 +78,7 @@ void World::Build()
 	SetCamera(orthoPtr);
 	*/
 
-	/*ThinLens*/
+	/*ThinLens
 	std::shared_ptr<ThinLens> thinLensPtr = std::make_shared<ThinLens>();
 	thinLensPtr->SetSampler(std::move(std::make_shared<MultiJittered>(numSamples)));
 	thinLensPtr->SetEye(500, 0, 0);
@@ -85,7 +87,16 @@ void World::Build()
 	thinLensPtr->SetViewDistance(250.0f);
 	thinLensPtr->ComputeUVW();
 	SetCamera(thinLensPtr);
+	*/
 
+	/*FishEye*/
+	std::shared_ptr<FishEye> fishEyePtr = std::make_shared<FishEye>();
+	fishEyePtr->SetEye(1500, 0, 0);
+	fishEyePtr->SetLookAt(0, 0, 0);
+	fishEyePtr->SetPsiMax(0);
+	fishEyePtr->ComputeUVW();
+	SetCamera(fishEyePtr);
+	
 	//set object
 	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>();
 	sphere->SetCenter(0, 0, 0);
@@ -93,11 +104,6 @@ void World::Build()
 	sphere->SetColor(RGBColor(1, 1, 0));
 	AddObject(sphere);
 
-	sphere = std::make_shared<Sphere>();
-	sphere->SetCenter(-100, 0, 500);
-	sphere->SetRadius(100.0);
-	sphere->SetColor(RGBColor(1, 0, 0));
-	AddObject(sphere);
 }
 
 void World::AddObject(std::shared_ptr<GeometricObject> objectPtr)
