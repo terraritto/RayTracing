@@ -24,6 +24,7 @@
 #include "..//Cameras//ThinLens.h"
 #include "..//Cameras//FishEye.h"
 #include "..//Cameras//Spherical.h"
+#include "..//Cameras//StereoCamera.h"
 //DX library
 #include "DxLib.h"
 //STL
@@ -62,6 +63,15 @@ void World::Build()
 	
 
 	//set camera
+	//implamented below camera
+	/*
+	pinhole camera
+	orthographic camera
+	thinlens camera
+	fisheye camera
+	spherical camera
+	stereo camera
+	*/
 
 	/*pinhole
 	std::shared_ptr<Pinhole> pinholePtr = std::make_shared<Pinhole>();
@@ -99,7 +109,7 @@ void World::Build()
 	SetCamera(fishEyePtr);
 	*/
 
-	/*Spherical*/
+	/*Spherical
 	std::shared_ptr<Spherical> sphericalPtr = std::make_shared<Spherical>();
 	sphericalPtr->SetEye(1500, 0, 0);
 	sphericalPtr->SetLookAt(0, 0, 0);
@@ -107,6 +117,27 @@ void World::Build()
 	sphericalPtr->SetLambdaMax(180);
 	sphericalPtr->ComputeUVW();
 	SetCamera(sphericalPtr);
+	*/
+	
+	/*StereoCamera*/
+	float vpd = 100; // view plane distance
+
+	std::shared_ptr<Pinhole> leftCameraPtr = std::make_shared<Pinhole>();
+	leftCameraPtr->SetViewDistance(vpd);
+	std::shared_ptr<Pinhole> rightCameraPtr = std::make_shared<Pinhole>();
+	rightCameraPtr->SetViewDistance(vpd);
+
+	std::shared_ptr<StereoCamera> stereoPtr = std::make_shared<StereoCamera>();
+	stereoPtr->SetLeftCamera(leftCameraPtr);
+	stereoPtr->SetRightCamera(rightCameraPtr);
+	stereoPtr->UseParallelViewing();
+	stereoPtr->SetPixelGap(5);
+	stereoPtr->SetEye(5, 0, 100);
+	stereoPtr->SetLookAt(0);
+	stereoPtr->ComputeUVW();
+	stereoPtr->SetStereoAngle(10.0f);
+	stereoPtr->SetupCameras();
+	SetCamera(stereoPtr);
 	
 	//set object
 	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>();
