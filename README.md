@@ -48,11 +48,13 @@ When we take a picture, it is hidden many effects.
 Camera class can realize them.  
 For example , Depth of Field(DOF) by ThinLens.  
 I prepare many cameras below.  
+
 * Orthographic Camera
 * Pinhole Camera
 * ThinLens Camera
 * FishEye Projection Camera
 * Spherical Panoramic Projection Camera
+* Stereo Camera
 
 Build which is member function has these camera's samples.  
 You should be refered to them.
