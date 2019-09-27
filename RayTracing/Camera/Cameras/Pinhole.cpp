@@ -82,6 +82,42 @@ void Pinhole::RenderScene(const World& w)
 	}
 }
 
+void Pinhole::RenderStereo(const World& w, float x, int offset)
+{
+	RGBColor L;
+	ViewPlane vp(w.mViewPlane);
+	Ray ray;
+	int depth = 0; //recursion depth
+	Point2D sp;
+	Point2D pp;
+
+	vp.mPixelSize /= mZoom;
+	ray.mOrigin = mEye;
+
+	for (int r = 0; r < vp.mVRes; r++)
+	{
+		for (int c = 0; c < vp.mHRes; c++)
+		{
+			L = black;
+
+			for (int j = 0; j < vp.mNumSamples; j++)
+			{
+				sp = vp.mSamplerPtr->SampleUnitSquare();
+				pp.mPosX = vp.mPixelSize * (c - 0.5 * vp.mHRes + sp.mPosX) + x;
+				pp.mPosY = vp.mPixelSize * (r - 0.5 * vp.mVRes + sp.mPosY);
+				ray.mDirection = GetDirection(pp);
+				// TraceRay output black pixel now
+				// so if you run any programs, image is all black.
+				// if you use TraceRay(ray);, you can output ideal images. 
+				L += w.mTracerPtr->TraceRay(ray);
+			}
+			L /= vp.mNumSamples;
+			L *= mExposureTime;
+			w.DisplayPixel(r, c + offset, L);
+		}
+	}
+}
+
 void Pinhole::SetViewDistance(float d)
 {
 	mDistance = d;

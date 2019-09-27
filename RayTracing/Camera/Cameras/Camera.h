@@ -14,6 +14,7 @@ public:
 	virtual std::shared_ptr<Camera> Clone() const { return std::move(std::make_shared<Camera>(*this)); };
 
 	virtual void RenderScene(const World& w) {};
+	virtual void RenderStereo(const World& w, float x, int offset) {};
 	void ComputeUVW();
 
 	void SetEye(const Point3D& p);

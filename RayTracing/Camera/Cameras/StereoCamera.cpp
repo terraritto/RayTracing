@@ -78,11 +78,19 @@ void StereoCamera::RenderScene(const World& w)
 
 	if (mViewing == EViewingType::EParallel)
 	{
+		// left view on left
+		mLeftCameraPtr->RenderStereo(w, x, 0);
 
+		//right view on right
+		mRightCameraPtr->RenderStereo(w, -x, hRes + mPixelGap);
 	}
 
 	if (mViewing == EViewingType::ETransverse)
 	{
+		// right view on left
+		mRightCameraPtr->RenderStereo(w, -x, 0);
 
+		//left view on right
+		mLeftCameraPtr->RenderStereo(w, x, hRes + mPixelGap);
 	}
 }

@@ -52,7 +52,7 @@ Point3D& Point3D::operator=(const Point3D& rhs)
 	return (*this);
 }
 
-inline Point3D Point3D::operator-() const
+Point3D Point3D::operator-() const
 {
 	return (Point3D(-mPosX, -mPosY, -mPosZ));
 }
@@ -67,17 +67,17 @@ Point3D Point3D::operator+(const Vector3D& v) const
 	return (Point3D(mPosX + v.mPosX, mPosY + v.mPosY, mPosZ + v.mPosZ));
 }
 
-inline Point3D Point3D::operator-(const Vector3D& v) const
+Point3D Point3D::operator-(const Vector3D& v) const
 {
 	return (Point3D(mPosX - v.mPosX, mPosY - v.mPosY, mPosZ - v.mPosZ));
 }
 
-inline Point3D Point3D::operator*(const double a) const 
+Point3D Point3D::operator*(const double a) const 
 {
 	return (Point3D(mPosX * a, mPosY * a, mPosZ * a));
 }
 
-inline double Point3D::LengthSq(const Point3D& p) const
+double Point3D::LengthSq(const Point3D& p) const
 {
 	return (std::pow(mPosX - p.mPosX, 2) + std::pow(mPosY - p.mPosY, 2) + std::pow(mPosZ - p.mPosZ,2));
 }

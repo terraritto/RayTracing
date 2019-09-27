@@ -16,6 +16,7 @@ public:
 	void SetZoom(const float zoomFactor);
 	Vector3D GetDirection(const Point2D& p) const;
 	void RenderScene(const World& w) override;
+	void RenderStereo(const World& w, float x, int offset) override;
 private:
 	float mDistance;
 	float mZoom;

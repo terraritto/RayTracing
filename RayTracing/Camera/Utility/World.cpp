@@ -47,11 +47,11 @@ World::~World()
 
 void World::Build()
 {
-	int numSamples = 2;
+	int numSamples = 100;
 
 	//set View Plane
-	mViewPlane.SetHRes(1000);
-	mViewPlane.SetVRes(1000);
+	mViewPlane.SetHRes(300);
+	mViewPlane.SetVRes(300);
 	mViewPlane.SetPixelSize(1.0);
 	mViewPlane.SetSampler(std::move(std::make_shared<MultiJittered>(numSamples)));
 
@@ -120,7 +120,7 @@ void World::Build()
 	*/
 	
 	/*StereoCamera*/
-	float vpd = 100; // view plane distance
+	float vpd = 400; // view plane distance
 
 	std::shared_ptr<Pinhole> leftCameraPtr = std::make_shared<Pinhole>();
 	leftCameraPtr->SetViewDistance(vpd);
@@ -132,7 +132,7 @@ void World::Build()
 	stereoPtr->SetRightCamera(rightCameraPtr);
 	stereoPtr->UseParallelViewing();
 	stereoPtr->SetPixelGap(5);
-	stereoPtr->SetEye(5, 0, 100);
+	stereoPtr->SetEye(1500, 0, 0);
 	stereoPtr->SetLookAt(0);
 	stereoPtr->ComputeUVW();
 	stereoPtr->SetStereoAngle(10.0f);
@@ -142,7 +142,7 @@ void World::Build()
 	//set object
 	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>();
 	sphere->SetCenter(0, 0, 0);
-	sphere->SetRadius(250.0);
+	sphere->SetRadius(50.0);
 	sphere->SetColor(RGBColor(1, 1, 0));
 	AddObject(sphere);
 
