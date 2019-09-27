@@ -57,7 +57,11 @@ I prepare many cameras below.
 * Stereo Camera
 
 Build which is member function has these camera's samples.  
-You should be refered to them.
+You should be refered to them.  
+Stereo Camera has another camera to implement binocular disparity.  
+this is used by RenderStereo camera class's member function.  
+this program is written at Pinhole only.
+If you use another cameras, you must implement.
 
 ## will be implemented ......?
 * rotation
