@@ -47,7 +47,7 @@ World::~World()
 
 void World::Build()
 {
-	int numSamples = 100;
+	int numSamples = 10;
 
 	//set View Plane
 	mViewPlane.SetHRes(300);
@@ -132,7 +132,7 @@ void World::Build()
 	stereoPtr->SetRightCamera(rightCameraPtr);
 	stereoPtr->UseParallelViewing();
 	stereoPtr->SetPixelGap(5);
-	stereoPtr->SetEye(1500, 0, 0);
+	stereoPtr->SetEye(500, 0, 0);
 	stereoPtr->SetLookAt(0);
 	stereoPtr->ComputeUVW();
 	stereoPtr->SetStereoAngle(10.0f);
