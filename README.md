@@ -63,6 +63,35 @@ this is used by RenderStereo camera class's member function.
 this program is written at Pinhole only.
 If you use another cameras, you must implement.
 
+## BRDF
+BRDF(Bidirectional Reflectance distribution function) is diffcult theory.  
+It models real reflect phenomenon.   
+In computer graphics, it uses approximation.  
+this directory is implemented below.
+
+* Lambertian Reflection
+
+It's like perfect diffuse reflection (one way of simplest BRDf).
+
+## Light
+We must think light for shading.  
+I prepare for simple light below. You maybe use it for rasterize.
+
+* Ambient Light
+* Directional Light
+* Point Light
+
+I also prepare for material.  
+they can shade more beautiful using by light.  
+You have to compare Bare-Bone Ray Tracer. you must be impressed.  
+the material is below.
+
+* matte
+
+When you specify light power more stronger, color is out of range.  
+I implement tone Mapping that clamps the color.   
+this is processed by MaxToOne Function where is World Class member function.
 ## will be implemented ......?
 * rotation
 * Cylindrical Panoramic Projection
+* distance attenuation
