@@ -87,10 +87,16 @@ You have to compare Bare-Bone Ray Tracer. you must be impressed.
 the material is below.
 
 * matte
+* phong
+* Plastic
 
 When you specify light power more stronger, color is out of range.  
 I implement tone Mapping that clamps the color.   
 this is processed by MaxToOne Function where is World Class member function.
+
+add BRDF for Phong below.  
+
+* Glossy Specular (default is Lewis,1994 method. you can use Blinn,1977 method if you want to calculate other method.)
 ## will be implemented ......?
 * rotation
 * Cylindrical Panoramic Projection
