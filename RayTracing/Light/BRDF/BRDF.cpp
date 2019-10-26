@@ -19,6 +19,11 @@ BRDF::BRDF(const BRDF& brdf)
 	}
 }
 
+std::shared_ptr<BRDF> BRDF::Clone() const
+{
+	return std::make_shared<BRDF>(*this);
+}
+
 BRDF& BRDF::operator=(const BRDF& rhs)
 {
 	if (this == &rhs)

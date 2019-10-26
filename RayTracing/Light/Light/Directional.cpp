@@ -84,6 +84,7 @@ void Directional::SetDirection(float dx, float dy, float dz)
 
 Vector3D Directional::GetDirection(ShadeRec& sr)
 {
+	mDir.Normalize();
 	return mDir;
 }
 

@@ -10,7 +10,7 @@ class BRDF
 public:
 	BRDF();
 	BRDF(const BRDF& brdf);
-	//std::shared_ptr<BRDF> Clone() const = 0;
+	std::shared_ptr<BRDF> Clone() const;
 	BRDF& operator=(const BRDF& rhs);
 	virtual ~BRDF();
 

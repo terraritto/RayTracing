@@ -99,7 +99,7 @@ bool Sphere::hit(const Ray& ray, double& tMin, ShadeRec& sr) const
 		if (t > kEpsilon)
 		{
 			tMin = t;
-			sr.mNormal = (temp + t * ray.mOrigin) / mRadius;
+			sr.mNormal = (temp + t * ray.mDirection) / mRadius;
 			sr.mLocalHitPoint = ray.mOrigin + t * ray.mDirection;
 			return true;
 		}
