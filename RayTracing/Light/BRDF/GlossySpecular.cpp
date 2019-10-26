@@ -21,7 +21,7 @@ std::shared_ptr<GlossySpecular> GlossySpecular::Clone() const
 }
 
 // reciprofical glossy specular BRDF (Lewis,1994)
-/*
+
 RGBColor GlossySpecular::Func(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const
 {
 	RGBColor L;
@@ -37,9 +37,10 @@ RGBColor GlossySpecular::Func(const ShadeRec& sr, const Vector3D& wo, const Vect
 
 	return L;
 }
-*/
+
 
 // Phong's specular model (Blinn, 1977)
+/*
 RGBColor GlossySpecular::Func(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const
 {
 	RGBColor L;
@@ -54,6 +55,7 @@ RGBColor GlossySpecular::Func(const ShadeRec& sr, const Vector3D& wo, const Vect
 
 	return L;
 }
+*/
 
 RGBColor GlossySpecular::Rho(const ShadeRec& sr, const Vector3D& wo) const
 {

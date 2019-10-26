@@ -1,4 +1,4 @@
-#include "..\Material\Plastic.h"
+#include "Plastic.h"
 
 Plastic::Plastic()
 	: Material()
