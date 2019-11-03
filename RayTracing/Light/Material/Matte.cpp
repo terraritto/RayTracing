@@ -122,7 +122,17 @@ RGBColor Matte::Shade(ShadeRec& sr)
 
 		if (nDotWi > 0.0)
 		{
-			L += mDiffuseBRDF->Func(sr, wo, wi) * sr.mWorld.mLights[j]->L(sr) * nDotWi;
+			bool inShadow = false;
+
+			if (sr.mWorld.mLights[j]->GetIsShadow())
+			{
+				Ray shadowRay(sr.mHitPoint, wi);
+				inShadow = sr.mWorld.mLights[j]->InShadow(shadowRay, sr);
+			}
+			if (!inShadow)
+			{
+				L += mDiffuseBRDF->Func(sr, wo, wi) * sr.mWorld.mLights[j]->L(sr) * nDotWi;
+			}
 		}
 	}
 

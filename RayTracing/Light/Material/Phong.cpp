@@ -107,8 +107,17 @@ RGBColor Phong::Shade(ShadeRec& sr)
 
 		if (nDotWi > 0.0)
 		{
-			L += (mDiffuseBRDF->Func(sr, wo, wi) + mSpecularBRDF->Func(sr, wo, wi))
-				* sr.mWorld.mLights[j]->L(sr) * nDotWi;
+			bool inShadow = false;
+
+			if (sr.mWorld.mLights[j]->GetIsShadow())
+			{
+				Ray ShadowRay(sr.mHitPoint, wi);
+				inShadow = sr.mWorld.mLights[j]->InShadow(ShadowRay, sr);
+			}
+			if (!inShadow) {
+				L += (mDiffuseBRDF->Func(sr, wo, wi) + mSpecularBRDF->Func(sr, wo, wi))
+					* sr.mWorld.mLights[j]->L(sr) * nDotWi;
+			}
 		}
 	}
 

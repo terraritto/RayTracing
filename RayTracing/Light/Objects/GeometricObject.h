@@ -13,6 +13,7 @@ public:
 	virtual ~GeometricObject();
 
 	virtual bool hit(const class Ray& ray, double& t, class ShadeRec& s) const = 0;
+	virtual bool Shadow_hit(const Ray& ray, float& tmin) const;
 	RGBColor GetColor();
 	void SetColor(RGBColor color) { mColor = color; };
 	std::shared_ptr<Material> GetMaterial();

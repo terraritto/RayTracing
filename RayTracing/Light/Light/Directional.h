@@ -21,6 +21,7 @@ public:
 	void SetDirection(float dx, float dy, float dz);
 	Vector3D GetDirection(ShadeRec& sr) override;
 	RGBColor L(ShadeRec& sr) override;
+	bool InShadow(const Ray& ray, const ShadeRec& sr) const override;
 private:
 	float mLs;
 	RGBColor mColor;

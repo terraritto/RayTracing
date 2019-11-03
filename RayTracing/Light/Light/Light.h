@@ -18,4 +18,10 @@ public:
 
 	virtual Vector3D GetDirection(ShadeRec& sr) = 0;
 	virtual RGBColor L(ShadeRec& sr);
+	virtual bool InShadow(const Ray& ray, const ShadeRec& sr) const;
+
+	bool GetIsShadow() { return mIsShadow; }
+	void SetIsShadow(bool shadow) { mIsShadow = shadow; }
+protected:
+	bool mIsShadow;
 };

@@ -17,6 +17,11 @@ GeometricObject::~GeometricObject()
 
 }
 
+bool GeometricObject::Shadow_hit(const Ray& ray, float& tmin) const
+{
+	return false;
+}
+
 RGBColor GeometricObject::GetColor()
 {
 	return mColor;

@@ -70,3 +70,18 @@ bool Plane::hit(const Ray& ray, double& tMin, ShadeRec& sr) const
 		return (false);
 	}
 }
+
+bool Plane::Shadow_hit(const Ray& ray, float& tMin) const
+{
+	double t = (mPoint - ray.mOrigin) * mNormal / (ray.mDirection * mNormal);
+
+	if (t > kEpsilon)
+	{
+		tMin = t;
+		return (true);
+	}
+	else
+	{
+		return (false);
+	}
+}

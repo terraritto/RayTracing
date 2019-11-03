@@ -17,6 +17,7 @@ public:
 
 	virtual std::shared_ptr<Plane> Clone() const;
 	virtual bool hit(const Ray& ray, double& tMin,ShadeRec& sr) const;
+	bool Shadow_hit(const Ray& ray, float& tmin) const override;
 private:
 	Point3D mPoint;
 	Normal mNormal;

@@ -106,3 +106,38 @@ bool Sphere::hit(const Ray& ray, double& tMin, ShadeRec& sr) const
 	}
 	return false;
 }
+
+bool Sphere::Shadow_hit(const Ray& ray, float& tMin) const
+{
+	double t;
+	Vector3D temp = ray.mOrigin - mCenter; //direction vector for Sphere. (o - c) 
+	double a = ray.mDirection * ray.mDirection; // a = d * d
+	double b = 2.0 * temp * ray.mDirection; // b = 2(o - c) * d
+	double c = temp * temp - mRadius * mRadius; // c = (o - c) * (o - c) - r * r;
+	double disc = b * b - 4.0 * a * c; // discriminant
+
+	if (disc < 0.0) // No hit
+	{
+		return false;
+	}
+	else // one or two hit
+	{
+		double e = std::sqrt(disc);
+		double denom = 2.0 * a;
+		t = (-b - e) / denom;  //swaller root
+
+		if (t > kEpsilon)
+		{
+			tMin = t;
+			return true;
+		}
+
+		t = (-b + e) / denom; //larger root
+		if (t > kEpsilon)
+		{
+			tMin = t;
+			return true;
+		}
+	}
+	return false;
+}

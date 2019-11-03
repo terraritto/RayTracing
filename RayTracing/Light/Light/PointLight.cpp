@@ -89,3 +89,19 @@ RGBColor PointLight::L(ShadeRec& sr)
 {
 	return mLs * mColor;
 }
+
+bool PointLight::InShadow(const Ray& ray, const ShadeRec& sr) const
+{
+	float t;
+	int numObjects = sr.mWorld.mObjects.size();
+	float d = Point3D(mLocation.mPosX, mLocation.mPosY, mLocation.mPosZ).Length(ray.mOrigin);
+
+	for (int j = 0; j < numObjects; j++)
+	{
+		if (sr.mWorld.mObjects[j]->Shadow_hit(ray, t) && t < d)
+		{
+			return true;
+		}
+	}
+	return false;
+}

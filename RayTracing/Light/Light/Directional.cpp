@@ -92,3 +92,18 @@ RGBColor Directional::L(ShadeRec& sr)
 {
 	return mLs * mColor;
 }
+
+bool Directional::InShadow(const Ray& ray, const ShadeRec& sr) const
+{
+	float t;
+	int numObjects = sr.mWorld.mObjects.size();
+
+	for (int j = 0; j < numObjects; j++)
+	{
+		if (sr.mWorld.mObjects[j]->Shadow_hit(ray, t))
+		{
+			return true;
+		}
+	}
+	return false;
+}
