@@ -32,6 +32,11 @@ RGBColor Material::PathShade(ShadeRec& sr)
 	return black;
 }
 
+RGBColor Material::GetLe(ShadeRec& sr) const
+{
+	return black;
+}
+
 Material& Material::operator=(const Material& rhs)
 {
 	if (this == &rhs)
