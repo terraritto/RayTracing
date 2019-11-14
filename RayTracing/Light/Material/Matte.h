@@ -18,6 +18,7 @@ public:
 	void SetCd(const float r, const float g, const float b);
 	void SetCd(const float c);
 	RGBColor Shade(ShadeRec& sr) override;
+	RGBColor AreaLightShade(ShadeRec& sr) override;
 private:
 	std::shared_ptr<Lambertian> mAmbientBRDF;
 	std::shared_ptr<Lambertian> mDiffuseBRDF;

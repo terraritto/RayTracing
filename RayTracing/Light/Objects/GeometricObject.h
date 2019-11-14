@@ -18,6 +18,11 @@ public:
 	void SetColor(RGBColor color) { mColor = color; };
 	std::shared_ptr<Material> GetMaterial();
 	void SetMaterial(std::shared_ptr<Material> material);
+
+	//for area lights......?
+	virtual Point3D Sample();
+	virtual float pdf(const ShadeRec& sr);
+	virtual Normal GetNormal(const Point3D& p);
 protected:
 	RGBColor mColor;
 	std::shared_ptr<Material> mMaterial;

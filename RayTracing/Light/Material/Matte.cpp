@@ -138,3 +138,35 @@ RGBColor Matte::Shade(ShadeRec& sr)
 
 	return L;
 }
+
+RGBColor Matte::AreaLightShade(ShadeRec& sr)
+{
+	Vector3D wo = -sr.mRay.mDirection;
+	RGBColor L = mAmbientBRDF->Rho(sr, wo) * sr.mWorld.mAmbientPtr->L(sr);
+	int numLights = sr.mWorld.mLights.size();
+
+	for (int j = 0; j < numLights; j++)
+	{
+		Vector3D wi = sr.mWorld.mLights[j]->GetDirection(sr);
+		float nDotWi = sr.mNormal * wi;
+
+		if (nDotWi > 0.0)
+		{
+			bool inShadow = false;
+			if (sr.mWorld.mLights[j]->GetIsShadow())
+			{
+				Ray shadowRay(sr.mHitPoint, wi);
+				inShadow = sr.mWorld.mLights[j]->InShadow(shadowRay, sr);
+			}
+
+			if (!inShadow)
+			{
+				L += mDiffuseBRDF->Func(sr, wo, wi) * sr.mWorld.mLights[j]->L(sr)
+					* sr.mWorld.mLights[j]->G(sr) * nDotWi /
+					sr.mWorld.mLights[j]->pdf(sr);
+			}
+		}
+	}
+
+	return L;
+}

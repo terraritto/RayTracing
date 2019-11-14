@@ -41,3 +41,18 @@ void GeometricObject::SetMaterial(std::shared_ptr<Material> material)
 	}
 	mMaterial = material;
 }
+
+Point3D GeometricObject::Sample()
+{
+	return Point3D();
+}
+
+float GeometricObject::pdf(const ShadeRec& sr)
+{
+	return 1.0f;
+}
+
+Normal GeometricObject::GetNormal(const Point3D& p) const
+{
+	return Normal();
+}
