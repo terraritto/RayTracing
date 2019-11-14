@@ -35,6 +35,16 @@ RGBColor Light::L(ShadeRec& sr)
 	return black;
 }
 
+float Light::G(const ShadeRec& sr) const
+{
+	return 1.0f;
+}
+
+float Light::pdf(const ShadeRec& sr) const
+{
+	return 1.0f;
+}
+
 bool Light::InShadow(const Ray& ray, const ShadeRec& sr) const
 {
 	return false;

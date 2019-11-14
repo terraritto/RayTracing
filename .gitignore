@@ -1,0 +1,17 @@
+﻿################################################################################
+# この .gitignore ファイルは Microsoft(R) Visual Studio によって自動的に作成されました。
+################################################################################
+
+/terraritto/RhythmGame/.vs/VSWorkspaceState.json
+/terraritto/RhythmGame/.vs/slnx.sqlite
+/terraritto/RhythmGame/.vs/RhythmGame/v16
+/terraritto/RhythmGame/.vs/ProjectSettings.json
+/terraritto/RhythmGame/.vs
+/RayTracing.sln
+/RayTracing/RayTracing.vcxproj.user
+/RayTracing/RayTracing.vcxproj.filters
+/RayTracing/RayTracing.vcxproj
+/RayTracing/Log.txt
+/RayTracing/Debug
+/Debug
+/.vs/RayTracing

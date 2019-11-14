@@ -18,6 +18,8 @@ public:
 
 	virtual Vector3D GetDirection(ShadeRec& sr) = 0;
 	virtual RGBColor L(ShadeRec& sr);
+	virtual float G(const ShadeRec& sr) const;
+	virtual float pdf(const ShadeRec& sr) const;
 	virtual bool InShadow(const Ray& ray, const ShadeRec& sr) const;
 
 	bool GetIsShadow() { return mIsShadow; }
