@@ -12,3 +12,4 @@ const double    INVPI = 0.3183098861837906715;
 const double    PI_ON_180 = PI / 180;
 
 constexpr double kHugeValue = 1.0E10;
+constexpr double kEpsilon = 0.0001;
