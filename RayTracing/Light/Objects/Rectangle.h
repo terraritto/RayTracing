@@ -16,14 +16,15 @@ public:
 	std::shared_ptr<Rectangle> Clone() const;
 	~Rectangle();
 
-	virtual bool hit(const Ray& ray, float& t, ShadeRec& s) const;
-	bool Shadow_hit(const Ray& ray, float& tmin) const override;
+	virtual bool hit(const Ray& ray, float& tMin, ShadeRec& s) const;
+	bool Shadow_hit(const Ray& ray, float& tMin) const override;
 
 	void SetP0(const Point3D p0);
 	Point3D GetP0() const;
-	void SetAB(const Vector3D a, const Vector3D b);
+	void SetAB(Vector3D a, Vector3D b);
 	void SetSampler(std::shared_ptr<Sampler> sampler);
 	Point3D Sample() override;
+	float pdf(const ShadeRec& sr) override;
 	Normal GetNormal(const Point3D& p) override;
 private:
 	Point3D mP0;

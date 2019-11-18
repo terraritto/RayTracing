@@ -12,6 +12,22 @@ GeometricObject::GeometricObject(const GeometricObject& object)
 	mColor = object.mColor;
 }
 
+GeometricObject& GeometricObject::operator=(GeometricObject& rhs)
+{
+	if (this == &rhs)
+	{
+		return *this;
+	}
+
+	mColor = rhs.mColor;
+	if (rhs.mMaterial)
+	{
+		mMaterial = rhs.mMaterial;
+	}
+
+	return *this;
+}
+
 GeometricObject::~GeometricObject()
 {
 
@@ -52,7 +68,7 @@ float GeometricObject::pdf(const ShadeRec& sr)
 	return 1.0f;
 }
 
-Normal GeometricObject::GetNormal(const Point3D& p) const
+Normal GeometricObject::GetNormal(const Point3D& p)
 {
 	return Normal();
 }
