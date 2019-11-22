@@ -21,7 +21,7 @@ Plane::Plane(const Point3D& point, const Normal& normal)
 }
 
 Plane::Plane(const Plane& plane)
-	: GeometricObject()
+	: GeometricObject(plane)
 	, mPoint(plane.mPoint)
 	, mNormal(plane.mNormal)
 {
@@ -82,6 +82,6 @@ bool Plane::Shadow_hit(const Ray& ray, float& tMin) const
 	}
 	else
 	{
-		return (false);
+		return false;
 	}
 }

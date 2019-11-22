@@ -83,7 +83,7 @@ std::shared_ptr<Matte> Matte::Clone() const
 
 void Matte::SetKa(const float k)
 {
-	mAmbientBRDF->SetKd(k);
+	mAmbientBRDF->SetKa(k);
 }
 
 void Matte::SetKd(const float k)
@@ -149,7 +149,6 @@ RGBColor Matte::AreaLightShade(ShadeRec& sr)
 	{
 		Vector3D wi = sr.mWorld.mLights[j]->GetDirection(sr);
 		float nDotWi = sr.mNormal * wi;
-
 		if (nDotWi > 0.0)
 		{
 			bool inShadow = false;

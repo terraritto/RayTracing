@@ -49,24 +49,21 @@ void Emissive::SetCe(const RGBColor c)
 
 void Emissive::SetCe(const float r, const float g, const float b)
 {
-	mCe = RGBColor(r, g, b);
+	mCe.mRed = r;
+	mCe.mGreen = g;
+	mCe.mBlue = b;
 }
 
 void Emissive::SetCe(const float c)
 {
-	mCe = RGBColor(c);
+	mCe.mRed = c;
+	mCe.mGreen = c;
+	mCe.mBlue = c;
 }
 
 RGBColor Emissive::Shade(ShadeRec& sr)
 {
-	if (-sr.mNormal * sr.mRay.mDirection > 0.0)
-	{
-		return mLs * mCe;
-	}
-	else
-	{
-		return black;
-	}
+	return black;
 }
 
 RGBColor Emissive::AreaLightShade(ShadeRec& sr)

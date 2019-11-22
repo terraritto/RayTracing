@@ -7,16 +7,16 @@
 #include "../Maths/Ray.h"
 #include "../Utility/ShadeRec.h"
 
-class Rectangle : public GeometricObject
+class Rectangler : public GeometricObject
 {
 public:
-	Rectangle(Point3D p0, Vector3D a, Vector3D b, Normal n);
-	Rectangle(const Rectangle& rect);
-	Rectangle& operator=(const Rectangle& rhs);
-	std::shared_ptr<Rectangle> Clone() const;
-	~Rectangle();
+	Rectangler(Point3D p0, Vector3D a, Vector3D b, Normal n);
+	Rectangler(const Rectangler& rect);
+	Rectangler& operator=(const Rectangler& rhs);
+	std::shared_ptr<Rectangler> Clone() const;
+	~Rectangler();
 
-	virtual bool hit(const Ray& ray, float& tMin, ShadeRec& s) const;
+	virtual bool hit(const Ray& ray, double& tMin, ShadeRec& s) const;
 	bool Shadow_hit(const Ray& ray, float& tMin) const override;
 
 	void SetP0(const Point3D p0);

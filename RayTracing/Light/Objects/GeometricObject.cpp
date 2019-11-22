@@ -3,6 +3,7 @@
 GeometricObject::GeometricObject()
 	: mColor() //‚±‚±‚ð’Ç‰Á
 	, mMaterial(nullptr)
+	, mIsShadow(true)
 {
 
 }
@@ -10,22 +11,6 @@ GeometricObject::GeometricObject()
 GeometricObject::GeometricObject(const GeometricObject& object)
 {
 	mColor = object.mColor;
-}
-
-GeometricObject& GeometricObject::operator=(GeometricObject& rhs)
-{
-	if (this == &rhs)
-	{
-		return *this;
-	}
-
-	mColor = rhs.mColor;
-	if (rhs.mMaterial)
-	{
-		mMaterial = rhs.mMaterial;
-	}
-
-	return *this;
 }
 
 GeometricObject::~GeometricObject()
@@ -56,6 +41,16 @@ void GeometricObject::SetMaterial(std::shared_ptr<Material> material)
 		mMaterial = nullptr;
 	}
 	mMaterial = material;
+}
+
+void GeometricObject::SetIsShadow(bool is)
+{
+	mIsShadow = is;
+}
+
+bool GeometricObject::GetIsShadow()
+{
+	return mIsShadow;
 }
 
 Point3D GeometricObject::Sample()

@@ -1,16 +1,20 @@
 #pragma once
 #include "GeometricObject.h"
+#include "../Maths/Point3D.h"
+#include "../Utility/ShadeRec.h"
+#include "../Maths/Ray.h"
+#include "../Maths/Normal.h"
 
 class Box : public GeometricObject
 {
 public:
-	Box(Point3D p0, Point3D p1);
+	Box(const Point3D& p0, const Point3D& p1);
 	Box(const Box& box);
 	~Box();
 	Box& operator=(Box& rhs);
 
 	std::shared_ptr<Box> Clone() const;
-	virtual bool hit(const Ray& ray, float& t, ShadeRec& s) const;
+	virtual bool hit(const Ray& ray, double& t, ShadeRec& s) const;
 	bool Shadow_hit(const Ray& ray, float& t) const override;
 	Normal GetNormal(const int faceHit) const;
 

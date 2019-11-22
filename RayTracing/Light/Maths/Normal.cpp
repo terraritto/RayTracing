@@ -103,7 +103,7 @@ Normal& Normal::operator+=(const Normal& n)
 //dot product
 double Normal::operator*(const Vector3D& v) const
 {
-	return (mPosX * v.mPosX + mPosY * v.mPosY + mPosZ * mPosZ);
+	return (mPosX * v.mPosX + mPosY * v.mPosY + mPosZ * v.mPosZ);
 }
 
 Normal Normal::operator*(const double a) const

@@ -23,6 +23,7 @@ MultiJittered::MultiJittered(const int numSamples, const int m)
 MultiJittered::MultiJittered(const MultiJittered& mjs)
 	:Sampler(mjs)
 {
+	GenerateSamples();
 }
 
 MultiJittered::~MultiJittered()
@@ -37,7 +38,7 @@ MultiJittered& MultiJittered::operator=(const MultiJittered& rhs)
 	}
 
 	Sampler::operator=(rhs);
-
+	GenerateSamples();
 	return *this;
 }
 
@@ -101,8 +102,8 @@ void MultiJittered::GenerateSamples()
 				std::uniform_int_distribution<int> intRand(j, n - 1);
 				int k = intRand(mt);
 				float t = mSamples[j * n + i + p * mNumSamples].mPosY;
-				mSamples[j * n + i + p * mNumSamples].mPosX = mSamples[j * n + k + p * mNumSamples].mPosY;
-				mSamples[j * n + k + p * mNumSamples].mPosY = t;
+				mSamples[j * n + i + p * mNumSamples].mPosY = mSamples[k * n + i + p * mNumSamples].mPosY;
+				mSamples[k * n + i + p * mNumSamples].mPosY = t;
 			}
 		}
 	}

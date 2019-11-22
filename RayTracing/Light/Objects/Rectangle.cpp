@@ -1,6 +1,6 @@
 #include "Rectangle.h"
 
-Rectangle::Rectangle(Point3D p0, Vector3D a, Vector3D b, Normal n)
+Rectangler::Rectangler(Point3D p0, Vector3D a, Vector3D b, Normal n)
 	: GeometricObject()
 	, mP0(p0)
 	, mA(a)
@@ -12,10 +12,10 @@ Rectangle::Rectangle(Point3D p0, Vector3D a, Vector3D b, Normal n)
 	, mALenSquared(a.Length()*a.Length())
 	, mBLenSquared(b.Length()*b.Length())
 {
-
+	mNormal.Normalize();
 }
 
-Rectangle::Rectangle(const Rectangle& rect)
+Rectangler::Rectangler(const Rectangler& rect)
 	: GeometricObject(rect)
 	, mP0(rect.mP0)
 	, mA(rect.mA)
@@ -36,7 +36,7 @@ Rectangle::Rectangle(const Rectangle& rect)
 	}
 }
 
-Rectangle& Rectangle::operator=(const Rectangle& rhs)
+Rectangler& Rectangler::operator=(const Rectangler& rhs)
 {
 	if (this == &rhs)
 	{
@@ -64,16 +64,16 @@ Rectangle& Rectangle::operator=(const Rectangle& rhs)
 	return *this;
 }
 
-std::shared_ptr<Rectangle> Rectangle::Clone() const
+std::shared_ptr<Rectangler> Rectangler::Clone() const
 {
-	return std::make_shared<Rectangle>(*this);
+	return std::make_shared<Rectangler>(*this);
 }
 
-Rectangle::~Rectangle()
+Rectangler::~Rectangler()
 {
 }
 
-bool Rectangle::hit(const Ray& ray, float& tMin, ShadeRec& sr) const
+bool Rectangler::hit(const Ray& ray, double& tMin, ShadeRec& sr) const
 {
 	double t = (mP0 - ray.mOrigin) * mNormal / (ray.mDirection * mNormal);
 
@@ -87,13 +87,13 @@ bool Rectangle::hit(const Ray& ray, float& tMin, ShadeRec& sr) const
 	
 	double ddota = d * mA;
 
-	if (ddota < 0.0 || ddota > mALenSquared)
+	if ((ddota < 0.0) || (ddota > mALenSquared))
 	{
 		return false;
 	}
 
 	double ddotb = d * mB;
-	if(ddotb <0.0 || ddotb > mBLenSquared)
+	if((ddotb <0.0) || (ddotb > mBLenSquared))
 	{
 		return false;
 	}
@@ -104,7 +104,7 @@ bool Rectangle::hit(const Ray& ray, float& tMin, ShadeRec& sr) const
 	return true;
 }
 
-bool Rectangle::Shadow_hit(const Ray& ray, float& tMin) const
+bool Rectangler::Shadow_hit(const Ray& ray, float& tMin) const
 {
 	double t = (mP0 - ray.mOrigin) * mNormal / (ray.mDirection * mNormal);
 
@@ -118,13 +118,13 @@ bool Rectangle::Shadow_hit(const Ray& ray, float& tMin) const
 
 	double ddota = d * mA;
 
-	if (ddota < 0.0 || ddota > mALenSquared)
+	if ((ddota < 0.0) || (ddota > mALenSquared))
 	{
 		return false;
 	}
 
 	double ddotb = d * mB;
-	if (ddotb <0.0 || ddotb > mBLenSquared)
+	if ((ddotb <0.0) || (ddotb > mBLenSquared))
 	{
 		return false;
 	}
@@ -134,17 +134,17 @@ bool Rectangle::Shadow_hit(const Ray& ray, float& tMin) const
 	return true;
 }
 
-void Rectangle::SetP0(const Point3D p0)
+void Rectangler::SetP0(const Point3D p0)
 {
 	mP0 = p0;
 }
 
-Point3D Rectangle::GetP0() const
+Point3D Rectangler::GetP0() const
 {
 	return mP0;
 }
 
-void Rectangle::SetAB(Vector3D a, Vector3D b)
+void Rectangler::SetAB(Vector3D a, Vector3D b)
 {
 	mA = a;
 	mB = b;
@@ -156,23 +156,23 @@ void Rectangle::SetAB(Vector3D a, Vector3D b)
 	mBLenSquared = b.Length() * b.Length();
 }
 
-void Rectangle::SetSampler(std::shared_ptr<Sampler> sampler)
+void Rectangler::SetSampler(std::shared_ptr<Sampler> sampler)
 {
 	mSamplePtr = sampler;
 }
 
-Point3D Rectangle::Sample()
+Point3D Rectangler::Sample()
 {
 	Point2D samplePoint = mSamplePtr->SampleUnitSquare();
-	return mP0 + samplePoint.mPosX * mA + samplePoint.mPosY * mB;
+	return (mP0 + samplePoint.mPosX * mA + samplePoint.mPosY * mB);
 }
 
-float Rectangle::pdf(const ShadeRec& sr)
+float Rectangler::pdf(const ShadeRec& sr)
 {
 	return mInvArea;
 }
 
-Normal Rectangle::GetNormal(const Point3D& p)
+Normal Rectangler::GetNormal(const Point3D& p)
 {
 	return mNormal;
 }

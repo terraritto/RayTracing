@@ -67,7 +67,7 @@ RGBColor& RGBColor::operator+=(const RGBColor& c)
 
 RGBColor RGBColor::operator*(const float a) const
 {
-	return (RGBColor(mRed * a, mBlue * a, mGreen * a));
+	return (RGBColor(mRed * a, mGreen * a, mBlue * a));
 }
 
 RGBColor& RGBColor::operator*=(const float a)

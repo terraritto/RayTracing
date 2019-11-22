@@ -1,6 +1,6 @@
 #include "Box.h"
 
-Box::Box(Point3D p0, Point3D p1)
+Box::Box(const Point3D& p0, const Point3D& p1)
 	: GeometricObject()
 	, mP0(p0)
 	, mP1(p1)
@@ -37,7 +37,7 @@ std::shared_ptr<Box> Box::Clone() const
 	return std::make_shared<Box>(*this);
 }
 
-bool Box::hit(const Ray& ray, float& t, ShadeRec& s) const
+bool Box::hit(const Ray& ray, double& t, ShadeRec& s) const
 {
 	Point3D origin(ray.mOrigin);
 	Point3D dir(ray.mDirection.mPosX,ray.mDirection.mPosY,ray.mDirection.mPosZ);
@@ -117,7 +117,7 @@ bool Box::hit(const Ray& ray, float& t, ShadeRec& s) const
 		faceOut = (c >= 0.0) ? 5 : 2;
 	}
 
-	if (t0 < t1 && t1 > kEpsilon)
+	if ((t0 < t1) && (t1 > kEpsilon))
 	{
 		if (t0 > kEpsilon)
 		{

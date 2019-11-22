@@ -10,7 +10,6 @@ class GeometricObject
 public:
 	GeometricObject();
 	GeometricObject(const GeometricObject& object);
-	GeometricObject& operator=(GeometricObject& rhs);
 	virtual ~GeometricObject();
 
 	virtual bool hit(const class Ray& ray, double& t, class ShadeRec& s) const = 0;
@@ -19,7 +18,8 @@ public:
 	void SetColor(RGBColor color) { mColor = color; };
 	std::shared_ptr<Material> GetMaterial();
 	void SetMaterial(std::shared_ptr<Material> material);
-
+	void SetIsShadow(bool is);
+	bool GetIsShadow();
 	//for area lights......?
 	virtual Point3D Sample();
 	virtual float pdf(const ShadeRec& sr);
@@ -27,4 +27,5 @@ public:
 protected:
 	RGBColor mColor;
 	std::shared_ptr<Material> mMaterial;
+	bool mIsShadow;
 };
