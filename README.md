@@ -1,7 +1,9 @@
 # Ray Tracing
 I study Ray Tracing and write Ray Tracer by C++ now.  
 This repositry is aimed that I complete Ray Tracer and test many techiques.  
-I refference "Ray Tracing from the ground up" so my code is influenced by this book.
+I refference "Ray Tracing from the ground up" so my code is influenced by this book.  
+This ray Tracer generate beautiful image.  
+I collect many images. If you look at only result, you search in the  Image directory.
 # How to Display
 There are many methods to display,   
 for example output file .bpm, .png, use API DirectX,OpenGL etc.   
@@ -14,7 +16,6 @@ DX Library Copyright (C) 2001-2019 Takumi Yamada.
 This RayTracer has simle function.  
 If you trace, this Tracer can't compute shading.  
 Object which you can use are Sphere and Plane.  
-![DxLib 2019_08_18 18_42_34](https://user-images.githubusercontent.com/28126083/63223366-36aa8480-c1ef-11e9-9847-fbd02283add2.png)
 ## AntiAliasing
 This directory is implemented three techniques about AntiAliasing.  
 * Regular Sampling   
@@ -80,6 +81,8 @@ I prepare for simple light below. You maybe use it for rasterize.
 * Ambient Light
 * Directional Light
 * Point Light
+* Ambient Occuluder  
+* Area Light   
 
 I also prepare for material.  
 they can shade more beautiful using by light.  
@@ -89,6 +92,7 @@ the material is below.
 * matte
 * phong
 * Plastic
+* emissive
 
 When you specify light power more stronger, color is out of range.  
 I implement tone Mapping that clamps the color.   
