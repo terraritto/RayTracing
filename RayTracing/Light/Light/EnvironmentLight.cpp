@@ -99,6 +99,11 @@ bool EnvironmentLight::InShadow(const Ray& ray, const ShadeRec& sr) const
 
 	for (int j = 0; j < numObjects; j++)
 	{
+		if (!sr.mWorld.mObjects[j]->GetIsShadow())
+		{
+			continue;
+		}
+
 		if (sr.mWorld.mObjects[j]->Shadow_hit(ray, t))
 		{
 			return true;
