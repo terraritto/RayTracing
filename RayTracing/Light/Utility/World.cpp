@@ -90,23 +90,25 @@ void World::Build()
 	//Main Light
 	std::shared_ptr<MultiJittered> samplePtr = std::make_shared<MultiJittered>(numSamples);
 	
-	/*
+	
 	std::shared_ptr<AmbientOccluder> ambientPtr = std::make_shared<AmbientOccluder>();
 	ambientPtr->SetRadiance(1.0);
 	ambientPtr->SetColor(white);
 	ambientPtr->SetMinAmount(0.5);
 	ambientPtr->SetSampler(samplePtr);
 	SetAmbientLight(ambientPtr); //for(A) & (C)
-	*/
 	
+	
+	/*
 	std::shared_ptr<Ambient> ambientPtr = std::make_shared<Ambient>();
 	ambientPtr->SetScaleRadiance(0.0);
 	SetAmbientLight(ambientPtr);
-	
+	*/
+
 	//Add Light
 	std::shared_ptr<Emissive> emissivePtr = std::make_shared<Emissive>();
 	emissivePtr->SetLadiance(0.9);
-	emissivePtr->SetCe(1.0);
+	emissivePtr->SetCe(white);
 
 	std::shared_ptr<ConcaveSphere> sphere_ptr = std::make_shared<ConcaveSphere>();
 	sphere_ptr->SetRadius(1000000.0);
@@ -130,45 +132,59 @@ void World::Build()
 
 	//set object
 	float ka = 0.2;
-
+	float ks = 1.0;
+	float exp = 10.0;
+	RGBColor cs(1, 0, 0);
 	//large sphere
-	std::shared_ptr<Matte> matte_ptr1 = std::make_shared<Matte>();
-	matte_ptr1->SetKa(ka);
-	matte_ptr1->SetKd(0.60);
-	matte_ptr1->SetCd(0.75);
+	std::shared_ptr<Phong> phong_ptr1 = std::make_shared<Phong>();
+	phong_ptr1->SetKa(ka);
+	phong_ptr1->SetKd(0.60);
+	phong_ptr1->SetCd(0.75);
+	phong_ptr1->SetKs(ks);
+	phong_ptr1->SetExp(exp);
+	phong_ptr1->SetCs(cs);
 
 	std::shared_ptr<Sphere> sphere_ptr1 = std::make_shared<Sphere>(Point3D(38, 20, -24), 20);
-	sphere_ptr1->SetMaterial(matte_ptr1);
+	sphere_ptr1->SetMaterial(phong_ptr1);
 	AddObject(sphere_ptr1);
 
 	//small sphere
-	std::shared_ptr<Matte> matte_ptr2 = std::make_shared<Matte>();
-	matte_ptr2->SetKa(ka);
-	matte_ptr2->SetKd(0.5);
-	matte_ptr2->SetCd(0.85);
+	std::shared_ptr<Phong> phong_ptr2 = std::make_shared<Phong>();
+	phong_ptr2->SetKa(ka);
+	phong_ptr2->SetKd(0.50);
+	phong_ptr2->SetCd(0.95);
+	phong_ptr2->SetKs(ks);
+	phong_ptr2->SetExp(exp);
+	phong_ptr2->SetCs(cs);
 
 	std::shared_ptr<Sphere> sphere_ptr2 = std::make_shared<Sphere>(Point3D(34, 12, 13), 12);
-	sphere_ptr2->SetMaterial(matte_ptr2);
+	sphere_ptr2->SetMaterial(phong_ptr2);
 	AddObject(sphere_ptr2);
 
 	//medium sphere
-	std::shared_ptr<Matte> matte_ptr3 = std::make_shared<Matte>();
-	matte_ptr3->SetKa(ka);
-	matte_ptr3->SetKd(0.5);
-	matte_ptr3->SetCd(0.75);
+	std::shared_ptr<Phong> phong_ptr3 = std::make_shared<Phong>();
+	phong_ptr3->SetKa(ka);
+	phong_ptr3->SetKd(0.50);
+	phong_ptr3->SetCd(0.75);
+	phong_ptr3->SetKs(ks);
+	phong_ptr3->SetExp(exp);
+	phong_ptr3->SetCs(cs);
 
 	std::shared_ptr<Sphere> sphere_ptr3 = std::make_shared<Sphere>(Point3D(-7, 15, 42), 16);
-	sphere_ptr3->SetMaterial(matte_ptr3);
+	sphere_ptr3->SetMaterial(phong_ptr3);
 	AddObject(sphere_ptr3);
 
 	// box
-	std::shared_ptr<Matte> matte_ptr5 = std::make_shared<Matte>();
-	matte_ptr5->SetKa(ka);
-	matte_ptr5->SetKd(0.5);
-	matte_ptr5->SetCd(0.95);
+	std::shared_ptr<Phong> phong_ptr5 = std::make_shared<Phong>();
+	phong_ptr5->SetKa(ka);
+	phong_ptr5->SetKd(0.50);
+	phong_ptr5->SetCd(0.95);
+	phong_ptr5->SetKs(ks);
+	phong_ptr5->SetExp(exp);
+	phong_ptr5->SetCs(cs);
 
 	std::shared_ptr<Box> box_ptr = std::make_shared<Box>(Point3D(-35, 0, -110), Point3D(-25, 60, 65));
-	box_ptr->SetMaterial(matte_ptr5);
+	box_ptr->SetMaterial(phong_ptr5);
 	AddObject(box_ptr);
 
 	// ground plane

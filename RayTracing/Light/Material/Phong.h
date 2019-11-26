@@ -14,6 +14,7 @@ public:
 	std::shared_ptr<Phong> Clone() const;
 
 	RGBColor Shade(ShadeRec& s) override;
+	RGBColor AreaLightShade(ShadeRec& sr) override;
 
 	void SetKa(float ka);
 	void SetKd(float kd);
@@ -22,6 +23,9 @@ public:
 	void SetCd(const RGBColor c);
 	void SetCd(const float r, const float g, const float b);
 	void SetCd(const float c);
+	void SetCs(const RGBColor c);
+	void SetCs(const float r, const float g, const float b);
+	void SetCs(const float c);
 protected:
 	std::shared_ptr<Lambertian> mAmbientBRDF;
 	std::shared_ptr<Lambertian> mDiffuseBRDF;

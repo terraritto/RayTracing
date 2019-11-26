@@ -124,6 +124,37 @@ RGBColor Phong::Shade(ShadeRec& sr)
 	return L;
 }
 
+RGBColor Phong::AreaLightShade(ShadeRec& sr)
+{
+	Vector3D wo = -sr.mRay.mDirection;
+	RGBColor L = mAmbientBRDF->Rho(sr, wo) * sr.mWorld.mAmbientPtr->L(sr);
+	int numLights = sr.mWorld.mLights.size();
+
+	for (int j = 0; j < numLights; j++)
+	{
+		Vector3D wi = sr.mWorld.mLights[j]->GetDirection(sr);
+		float nDotWi = sr.mNormal * wi;
+
+		if (nDotWi > 0.0)
+		{
+			bool inShadow = false;
+
+			if (sr.mWorld.mLights[j]->GetIsShadow())
+			{
+				Ray ShadowRay(sr.mHitPoint, wi);
+				inShadow = sr.mWorld.mLights[j]->InShadow(ShadowRay, sr);
+			}
+			if (!inShadow) {
+				L += (mDiffuseBRDF->Func(sr, wo, wi) + mSpecularBRDF->Func(sr, wo, wi))
+					* sr.mWorld.mLights[j]->L(sr) * sr.mWorld.mLights[j]->G(sr) *
+					nDotWi / sr.mWorld.mLights[j]->pdf(sr);
+			}
+		}
+	}
+
+	return L;
+}
+
 void Phong::SetKa(float ka)
 {
 	mAmbientBRDF->SetKd(ka);
@@ -148,19 +179,31 @@ void Phong::SetCd(const RGBColor c)
 {
 	mAmbientBRDF->SetCd(c);
 	mDiffuseBRDF->SetCd(c);
-	mSpecularBRDF->SetCs(c);
 }
 
 void Phong::SetCd(const float r, const float g, const float b)
 {
 	mAmbientBRDF->SetCd(r, g, b);
 	mDiffuseBRDF->SetCd(r, g, b);
-	mSpecularBRDF->SetCs(r, g, b);
 }
 
 void Phong::SetCd(const float c)
 {
 	mAmbientBRDF->SetCd(c);
 	mDiffuseBRDF->SetCd(c);
+}
+
+void Phong::SetCs(const RGBColor c)
+{
+	mSpecularBRDF->SetCs(c);
+}
+
+void Phong::SetCs(const float r, const float g, const float b)
+{
+	mSpecularBRDF->SetCs(r, g, b);
+}
+
+void Phong::SetCs(const float c)
+{
 	mSpecularBRDF->SetCs(c);
 }

@@ -83,6 +83,7 @@ I prepare for simple light below. You maybe use it for rasterize.
 * Point Light
 * Ambient Occuluder  
 * Area Light   
+* Environment Light
 
 I also prepare for material.  
 they can shade more beautiful using by light.  
@@ -105,3 +106,4 @@ add BRDF for Phong below.
 * rotation
 * Cylindrical Panoramic Projection
 * distance attenuation
+* Disk for Area Light
