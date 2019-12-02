@@ -1,6 +1,7 @@
 #pragma once
 #include "../Utility/RGBColor.h"
 #include "../Material/Material.h"
+#include "BBox.h"
 #include <memory>
 
 class Material;
@@ -24,6 +25,8 @@ public:
 	virtual Point3D Sample();
 	virtual float pdf(const ShadeRec& sr);
 	virtual Normal GetNormal(const Point3D& p);
+	//for BBox
+	virtual BBox GetBoundingBox();
 protected:
 	RGBColor mColor;
 	std::shared_ptr<Material> mMaterial;
