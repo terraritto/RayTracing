@@ -26,7 +26,7 @@ public:
 	virtual float pdf(const ShadeRec& sr);
 	virtual Normal GetNormal(const Point3D& p);
 	//for BBox
-	virtual BBox GetBoundingBox();
+	virtual BBox GetBoundingBox() const;
 protected:
 	RGBColor mColor;
 	std::shared_ptr<Material> mMaterial;

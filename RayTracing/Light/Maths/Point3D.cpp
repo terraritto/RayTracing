@@ -92,3 +92,13 @@ Point3D operator*(double a, const Point3D& p)
 {
 	return (Point3D(a * p.mPosX, a * p.mPosY, a * p.mPosZ));
 }
+
+Point3D operator-(const Point3D& p, double a)
+{
+	return Point3D(p.mPosX - a, p.mPosY - a, p.mPosZ - a);
+}
+
+Point3D operator+(const Point3D& p, double a)
+{
+	return Point3D(p.mPosX + a, p.mPosY + a, p.mPosZ + a);
+}

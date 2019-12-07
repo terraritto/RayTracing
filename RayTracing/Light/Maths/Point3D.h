@@ -24,3 +24,5 @@ public:
 };
 
 Point3D operator*(double a, const Point3D& p);
+Point3D operator-(const Point3D& p, double a);
+Point3D operator+(const Point3D& p, double a);
