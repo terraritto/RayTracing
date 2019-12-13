@@ -14,6 +14,7 @@
 #include "../Objects/ConcaveSphere.h"
 #include "../Objects/Triangle.h"
 #include "../Objects/Torus.h"
+#include "../Objects/PartSphere.h"
 //Tracer
 #include "../Tracer/MultipleObjects.h"
 #include "../Tracer/RayCast.h"
@@ -118,12 +119,12 @@ void World::Build()
 	phong_ptr1->SetKs(0.05);
 	phong_ptr1->SetExp(5);
 
-	float a = 2.0;
-	float b = 0.15;
+	std::shared_ptr<PartSphere> sphere_ptr1 = std::make_shared<PartSphere>();
+	sphere_ptr1->SetMaterial(phong_ptr1);
+	sphere_ptr1->SetPhi(0.0, PI);
+	sphere_ptr1->SetTheta(0.0, PI / 2);
+	AddObject(sphere_ptr1);
 
-	std::shared_ptr<Torus> torus_ptr = std::make_shared<Torus>(a, b);
-	torus_ptr->SetMaterial(phong_ptr1);
-	AddObject(torus_ptr);
 	//plane
 	std::shared_ptr<Matte> matte_ptr1 = std::make_shared<Matte>();
 	matte_ptr1->SetKa(0.15);
