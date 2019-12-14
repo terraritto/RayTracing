@@ -34,7 +34,7 @@ Torus& Torus::operator=(Torus& rhs)
 	return *this;
 }
 
-bool Torus::hit(const Ray& ray, double& tMin, ShadeRec& sr) const
+bool Torus::hit(const Ray& ray, double& tMin, ShadeRec& sr)
 {
 	double x1 = ray.mOrigin.mPosX; double y1 = ray.mOrigin.mPosY; double z1 = ray.mOrigin.mPosZ;
 	double d1 = ray.mDirection.mPosX; double d2 = ray.mDirection.mPosY; double d3 = ray.mDirection.mPosZ;

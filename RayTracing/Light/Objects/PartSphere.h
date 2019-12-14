@@ -14,7 +14,7 @@ public:
 
 	std::shared_ptr<PartSphere> Clone() const;
 
-	virtual bool hit(const Ray& ray, double& t, ShadeRec& s) const;
+	virtual bool hit(const Ray& ray, double& t, ShadeRec& s);
 	bool Shadow_hit(const Ray& ray, float& tmin) const override;
 
 	void SetPhi(const double min, const double max);

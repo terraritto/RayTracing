@@ -18,6 +18,11 @@ GeometricObject::~GeometricObject()
 
 }
 
+std::shared_ptr<GeometricObject> GeometricObject::Clone() const
+{
+	return std::make_shared<GeometricObject>(*this);
+}
+
 bool GeometricObject::Shadow_hit(const Ray& ray, float& tmin) const
 {
 	return false;

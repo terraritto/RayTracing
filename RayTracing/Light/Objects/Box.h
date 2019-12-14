@@ -14,7 +14,7 @@ public:
 	Box& operator=(Box& rhs);
 
 	std::shared_ptr<Box> Clone() const;
-	virtual bool hit(const Ray& ray, double& t, ShadeRec& s) const;
+	virtual bool hit(const Ray& ray, double& t, ShadeRec& s);
 	bool Shadow_hit(const Ray& ray, float& t) const override;
 	Normal GetNormal(const int faceHit) const;
 

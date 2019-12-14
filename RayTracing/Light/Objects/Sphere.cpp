@@ -68,7 +68,7 @@ void Sphere::SetRadius(const double r)
 	mRadius = r;
 }
 
-bool Sphere::hit(const Ray& ray, double& tMin, ShadeRec& sr) const
+bool Sphere::hit(const Ray& ray, double& tMin, ShadeRec& sr)
 {
 	double t;
 	Vector3D temp = ray.mOrigin - mCenter; //direction vector for Sphere. (o - c) 

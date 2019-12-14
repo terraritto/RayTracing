@@ -16,7 +16,7 @@ public:
 	std::shared_ptr<Rectangler> Clone() const;
 	~Rectangler();
 
-	virtual bool hit(const Ray& ray, double& tMin, ShadeRec& s) const;
+	virtual bool hit(const Ray& ray, double& tMin, ShadeRec& s);
 	bool Shadow_hit(const Ray& ray, float& tMin) const override;
 
 	void SetP0(const Point3D p0);

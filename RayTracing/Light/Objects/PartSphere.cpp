@@ -73,7 +73,7 @@ std::shared_ptr<PartSphere> PartSphere::Clone() const
 	return std::shared_ptr<PartSphere>();
 }
 
-bool PartSphere::hit(const Ray& ray, double& tMin, ShadeRec& sr) const
+bool PartSphere::hit(const Ray& ray, double& tMin, ShadeRec& sr)
 {
 	double t;
 	Vector3D temp = ray.mOrigin - mCenter;

@@ -53,7 +53,7 @@ Plane::~Plane()
 
 }
 
-bool Plane::hit(const Ray& ray, double& tMin, ShadeRec& sr) const
+bool Plane::hit(const Ray& ray, double& tMin, ShadeRec& sr)
 {
 	double t = (mPoint - ray.mOrigin) * mNormal / (ray.mDirection * mNormal);
 

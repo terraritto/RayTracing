@@ -48,7 +48,7 @@ std::shared_ptr<Triangle> Triangle::Clone() const
 	return std::make_shared<Triangle>(*this);
 }
 
-bool Triangle::hit(const Ray& ray, double& tMin, ShadeRec& sr) const
+bool Triangle::hit(const Ray& ray, double& tMin, ShadeRec& sr)
 {
 	double a = mV0.mPosX - mV1.mPosX, b = mV0.mPosX - mV2.mPosX;
 	double c = ray.mDirection.mPosX, d = mV0.mPosX - ray.mOrigin.mPosX;

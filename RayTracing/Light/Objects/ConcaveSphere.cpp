@@ -64,7 +64,7 @@ void ConcaveSphere::SetRadius(const double r)
 	mRadius = r;
 }
 
-bool ConcaveSphere::hit(const Ray& ray, double& tMin, ShadeRec& sr) const
+bool ConcaveSphere::hit(const Ray& ray, double& tMin, ShadeRec& sr)
 {
 	double t;
 	Vector3D temp = ray.mOrigin - mCenter; //direction vector for Sphere. (o - c) 

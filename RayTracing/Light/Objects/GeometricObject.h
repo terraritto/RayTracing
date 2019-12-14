@@ -1,10 +1,12 @@
 #pragma once
 #include "../Utility/RGBColor.h"
 #include "../Material/Material.h"
+#include "../Utility/ShadeRec.h"
 #include "BBox.h"
 #include <memory>
 
 class Material;
+class ShadeRec;
 
 class GeometricObject
 {
@@ -13,12 +15,13 @@ public:
 	GeometricObject(const GeometricObject& object);
 	virtual ~GeometricObject();
 
-	virtual bool hit(const class Ray& ray, double& t, class ShadeRec& s) const = 0;
+	std::shared_ptr<GeometricObject> Clone() const;
+	virtual bool hit(const Ray& ray, double& t, ShadeRec& s) { return false; }
 	virtual bool Shadow_hit(const Ray& ray, float& tmin) const;
 	RGBColor GetColor();
 	void SetColor(RGBColor color) { mColor = color; };
 	std::shared_ptr<Material> GetMaterial();
-	void SetMaterial(std::shared_ptr<Material> material);
+	virtual void SetMaterial(std::shared_ptr<Material> material);
 	void SetIsShadow(bool is);
 	bool GetIsShadow();
 	//for area lights......?

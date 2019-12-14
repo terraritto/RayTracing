@@ -73,7 +73,7 @@ Rectangler::~Rectangler()
 {
 }
 
-bool Rectangler::hit(const Ray& ray, double& tMin, ShadeRec& sr) const
+bool Rectangler::hit(const Ray& ray, double& tMin, ShadeRec& sr)
 {
 	double t = (mP0 - ray.mOrigin) * mNormal / (ray.mDirection * mNormal);
 

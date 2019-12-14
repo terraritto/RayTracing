@@ -37,7 +37,7 @@ std::shared_ptr<Box> Box::Clone() const
 	return std::make_shared<Box>(*this);
 }
 
-bool Box::hit(const Ray& ray, double& t, ShadeRec& s) const
+bool Box::hit(const Ray& ray, double& t, ShadeRec& s)
 {
 	Point3D origin(ray.mOrigin);
 	Point3D dir(ray.mDirection.mPosX,ray.mDirection.mPosY,ray.mDirection.mPosZ);

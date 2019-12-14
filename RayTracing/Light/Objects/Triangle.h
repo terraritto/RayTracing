@@ -12,7 +12,7 @@ public:
 	Triangle& operator=(const Triangle& rhs);
 	std::shared_ptr<Triangle> Clone() const;
 
-	virtual bool hit(const Ray& ray, double& tMin, ShadeRec& s) const;
+	virtual bool hit(const Ray& ray, double& tMin, ShadeRec& s);
 	bool Shadow_hit(const Ray& ray, float& tMin) const override;
 	BBox GetBoundingBox() const override;
 public:

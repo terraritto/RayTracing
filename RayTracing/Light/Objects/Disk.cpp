@@ -38,7 +38,7 @@ std::shared_ptr<Disk> Disk::Clone() const
 	return std::make_shared<Disk>(*this);
 }
 
-bool Disk::hit(const Ray& ray, double& tMin, ShadeRec& sr) const
+bool Disk::hit(const Ray& ray, double& tMin, ShadeRec& sr)
 {
 	float t = (mCenter - ray.mOrigin) * mNormal / (ray.mDirection * mNormal);
 	

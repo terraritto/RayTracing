@@ -12,7 +12,7 @@ public:
 	std::shared_ptr<Torus> Clone() const;
 	Torus& operator=(Torus& rhs);
 
-	bool hit(const Ray& ray, double& tMin, ShadeRec& sr) const override;
+	bool hit(const Ray& ray, double& tMin, ShadeRec& sr) override;
 	bool Shadow_hit(const Ray& ray, float& tMin) const override;
 private:
 	double mA;

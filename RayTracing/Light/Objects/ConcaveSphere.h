@@ -21,7 +21,7 @@ public:
 	void SetCenter(const Point3D& c);
 	void SetCenter(const double x, const double y, const double z);
 	void SetRadius(const double r);
-	virtual bool hit(const Ray& ray, double& t, ShadeRec& s) const;
+	virtual bool hit(const Ray& ray, double& t, ShadeRec& s);
 	bool Shadow_hit(const Ray& ray, float& tmin) const override;
 private:
 	Point3D mCenter;
