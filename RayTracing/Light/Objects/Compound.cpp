@@ -73,14 +73,14 @@ bool Compound::hit(const Ray& ray, double& tMin, ShadeRec& sr)
 		}
 	}
 
-	if (hit)
+	if (isHit)
 	{
 		sr.mT = tMin;
 		sr.mNormal = normal;
 		sr.mLocalHitPoint = local_hit_point;
 	}
 
-	return hit;
+	return isHit;
 }
 
 bool Compound::Shadow_hit(const Ray& ray, float& tMin) const
