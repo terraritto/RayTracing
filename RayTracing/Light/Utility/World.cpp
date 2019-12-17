@@ -16,6 +16,7 @@
 #include "../Objects/Torus.h"
 #include "../Objects/OpenCylinder.h"
 #include "../Objects/PartSphere.h"
+#include "../Objects/SolidCylinder.h"
 //Tracer
 #include "../Tracer/MultipleObjects.h"
 #include "../Tracer/RayCast.h"
@@ -184,7 +185,7 @@ void World::Build()
 	float bottom = 0.0;
 	float top = 85;
 	float radius = 22;
-	std::shared_ptr<OpenCylinder> cylinder_ptr = std::make_shared<OpenCylinder>(bottom,top,radius);
+	std::shared_ptr<SolidCylinder> cylinder_ptr = std::make_shared<SolidCylinder>(bottom,top,radius);
 	cylinder_ptr->SetMaterial(matte_ptr4);
 	AddObject(cylinder_ptr);
 
