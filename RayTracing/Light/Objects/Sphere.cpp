@@ -68,6 +68,13 @@ void Sphere::SetRadius(const double r)
 	mRadius = r;
 }
 
+BBox Sphere::GetBoundingBox() const
+{
+	Point3D p0(mCenter.mPosX - mRadius, mCenter.mPosY - mRadius, mCenter.mPosZ - mRadius);
+	Point3D p1(mCenter.mPosX + mRadius, mCenter.mPosY + mRadius, mCenter.mPosZ + mRadius);
+	return(BBox(p0, p1));
+}
+
 bool Sphere::hit(const Ray& ray, double& tMin, ShadeRec& sr)
 {
 	double t;
