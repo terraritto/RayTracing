@@ -136,3 +136,12 @@ double operator*(const Vector3D& v, const Normal& n)
 {
 	return(v.mPosX * n.mPosX + v.mPosY * n.mPosY + v.mPosZ * n.mPosZ);
 }
+
+Normal operator*(const Matrix& mat, const Normal& n)
+{
+	return(Normal(
+		mat.mMatrix[0][0] * n.mPosX + mat.mMatrix[1][0] * n.mPosY + mat.mMatrix[2][0] * n.mPosZ,
+		mat.mMatrix[0][1] * n.mPosX + mat.mMatrix[1][1] * n.mPosY + mat.mMatrix[2][1] * n.mPosZ,
+		mat.mMatrix[0][2] * n.mPosX + mat.mMatrix[1][2] * n.mPosY + mat.mMatrix[2][2] * n.mPosZ
+	));
+}

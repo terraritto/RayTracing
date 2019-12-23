@@ -32,3 +32,4 @@ Normal operator*(const double a, const Normal& n);
 class Vector3D operator+(const Vector3D& v, const Normal& n);
 class Vector3D operator-(const Vector3D& v, const Normal& n);
 double operator*(const Vector3D& v, const Normal& n);
+Normal operator*(const Matrix& mat, const Normal& n);

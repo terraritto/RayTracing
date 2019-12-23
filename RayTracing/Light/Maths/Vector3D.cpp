@@ -157,3 +157,14 @@ Vector3D operator*(const double a, const Vector3D& v)
 {
 	return (Vector3D(a * v.mPosX, a * v.mPosY, a * v.mPosZ));
 }
+
+Vector3D operator*(const Matrix& mat, const Vector3D& v)
+{
+	return(
+		Point3D(
+			mat.mMatrix[0][0] * v.mPosX + mat.mMatrix[0][1] * v.mPosY + mat.mMatrix[0][2] * v.mPosZ,
+			mat.mMatrix[1][0] * v.mPosX + mat.mMatrix[1][1] * v.mPosY + mat.mMatrix[1][2] * v.mPosZ,
+			mat.mMatrix[2][0] * v.mPosX + mat.mMatrix[2][1] * v.mPosY + mat.mMatrix[2][2] * v.mPosZ
+		)
+		);
+}

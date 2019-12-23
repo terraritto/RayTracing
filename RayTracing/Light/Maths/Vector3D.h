@@ -1,6 +1,7 @@
 #pragma once
 #include "Normal.h"
 #include "Point3D.h"
+#include "Matrix.h"
 
 class Normal;
 class Point3D;
@@ -37,3 +38,4 @@ public:
 };
 
 Vector3D operator*(const double a, const Vector3D& v);
+Vector3D operator*(const Matrix& mat, const Vector3D& v);

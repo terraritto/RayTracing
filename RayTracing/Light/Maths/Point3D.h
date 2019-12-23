@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector3D.h"
+#include "Matrix.h"
 class Vector3D;
 
 class Point3D
@@ -24,5 +25,6 @@ public:
 };
 
 Point3D operator*(double a, const Point3D& p);
+Point3D operator*(const Matrix& mat, const Point3D& p);
 Point3D operator-(const Point3D& p, double a);
 Point3D operator+(const Point3D& p, double a);
