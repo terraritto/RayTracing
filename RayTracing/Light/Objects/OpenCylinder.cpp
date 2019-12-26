@@ -123,7 +123,7 @@ bool OpenCylinder::Shadow_hit(const Ray& ray, float& tMin) const
 	double ox = ray.mOrigin.mPosX; double oy = ray.mOrigin.mPosY; double oz = ray.mOrigin.mPosZ;
 	double dx = ray.mDirection.mPosX; double dy = ray.mDirection.mPosY; double dz = ray.mDirection.mPosZ;
 
-	double a = dx * dx + dy * dy;
+	double a = dx * dx + dz * dz;
 	double b = 2.0 * (ox * dx + oz * dz);
 	double c = ox * ox + oz * oz - mRadius * mRadius;
 	double disc = b * b - 4.0 * a * c;

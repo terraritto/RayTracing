@@ -93,6 +93,14 @@ bool Instance::hit(const Ray& ray, double& tMin, ShadeRec& sr)
 
 bool Instance::Shadow_hit(const Ray& ray, float& tmin) const
 {
+	Ray inv_ray(ray);
+	inv_ray.mOrigin = mInvMatrix * inv_ray.mOrigin;
+	inv_ray.mDirection = mInvMatrix * inv_ray.mDirection;
+
+	if (mObjectPtr->Shadow_hit(inv_ray, tmin))
+	{
+		return true;
+	}
 	return false;
 }
 
