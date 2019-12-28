@@ -58,6 +58,10 @@ bool GeometricObject::GetIsShadow()
 	return mIsShadow;
 }
 
+void GeometricObject::AddObject(std::shared_ptr<GeometricObject> object_ptr)
+{
+}
+
 Point3D GeometricObject::Sample()
 {
 	return Point3D();

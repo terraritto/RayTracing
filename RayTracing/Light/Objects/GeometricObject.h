@@ -24,6 +24,8 @@ public:
 	virtual void SetMaterial(std::shared_ptr<Material> material);
 	void SetIsShadow(bool is);
 	bool GetIsShadow();
+	//for Compound Object
+	virtual void AddObject(std::shared_ptr<GeometricObject> object_ptr);
 	//for area lights......?
 	virtual Point3D Sample();
 	virtual float pdf(const ShadeRec& sr);
