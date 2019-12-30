@@ -111,3 +111,10 @@ bool BBox::hit(const Ray& ray) const
 
 	return (t0 < t1 && t1 > kEpsilon);
 }
+
+bool BBox::Inside(const Point3D& p) const
+{
+	return (p.mPosX > mP0.mPosX&& p.mPosX < mP1.mPosX) &&
+		(p.mPosY > mP0.mPosY&& p.mPosY < mP1.mPosY) &&
+		(p.mPosZ > mP1.mPosZ&& p.mPosZ < mP1.mPosZ);
+}

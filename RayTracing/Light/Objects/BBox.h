@@ -12,6 +12,7 @@ public:
 	~BBox();
 
 	bool hit(const Ray& ray) const;
+	bool Inside(const Point3D& p) const;
 	Point3D mP0;
 	Point3D mP1;
 };
