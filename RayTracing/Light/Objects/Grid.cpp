@@ -60,7 +60,7 @@ void Grid::SetupCells()
 	//multiplayer scales
 	double multiplier = 2.0;
 
-	double s = std::pow(wx * wy * wz / mObjects.size(), 1/3);
+	double s = std::pow(wx * wy * wz / mObjects.size(), 1.0/3.0);
 	
 	mNx = multiplier * wx / s + 1;
 	mNy = multiplier * wy / s + 1;
@@ -234,9 +234,9 @@ bool Grid::hit(const Ray& ray, double& t, ShadeRec& s)
 	{
 		//outside
 		Point3D p = ray.mOrigin + t0 * ray.mDirection;
-		ix = std::clamp((ox - x0) * mNx / (x1 - x0), 0.0, mNx - 1.0);
-		iy = std::clamp((oy - y0) * mNy / (y1 - y0), 0.0, mNy - 1.0);
-		iz = std::clamp((oz - z0) * mNz / (z1 - z0), 0.0, mNz - 1.0);
+		ix = std::clamp((p.mPosX - x0) * mNx / (x1 - x0), 0.0, mNx - 1.0);
+		iy = std::clamp((p.mPosY - y0) * mNy / (y1 - y0), 0.0, mNy - 1.0);
+		iz = std::clamp((p.mPosZ - z0) * mNz / (z1 - z0), 0.0, mNz - 1.0);
 	}
 
 	//ray parameter per cell in x,y,z dir
@@ -322,7 +322,7 @@ bool Grid::hit(const Ray& ray, double& t, ShadeRec& s)
 
 			tx_next += dtx;
 			ix += ix_step;
-			if (ix_stop)
+			if (ix == ix_stop)
 			{
 				return false;
 			}
@@ -365,9 +365,242 @@ bool Grid::hit(const Ray& ray, double& t, ShadeRec& s)
 	}
 }
 
-bool Grid::Shadow_hit(const Ray& ray, float& tmin) const
+bool Grid::Shadow_hit(const Ray& ray, float& t) const
 {
-	return false;
+	if (!mIsShadow)
+	{
+		return false;
+	}
+
+	double ox = ray.mOrigin.mPosX;
+	double oy = ray.mOrigin.mPosY;
+	double oz = ray.mOrigin.mPosZ;
+	double dx = ray.mDirection.mPosX;
+	double dy = ray.mDirection.mPosY;
+	double dz = ray.mDirection.mPosZ;
+
+	double x0 = mBBox.mP0.mPosX;
+	double y0 = mBBox.mP0.mPosY;
+	double z0 = mBBox.mP0.mPosZ;
+	double x1 = mBBox.mP1.mPosX;
+	double y1 = mBBox.mP1.mPosY;
+	double z1 = mBBox.mP1.mPosZ;
+
+	//BBox hit function can't return t value
+	//so we define here.
+	double tx_min, ty_min, tz_min;
+	double tx_max, ty_max, tz_max;
+
+	double a = 1.0 / dx;
+	if (a >= 0)
+	{
+		tx_min = (x0 - ox) * a;
+		tx_max = (x1 - ox) * a;
+	}
+	else
+	{
+		tx_min = (x1 - ox) * a;
+		tx_max = (x0 - ox) * a;
+	}
+
+	double b = 1.0 / dy;
+	if (b >= 0)
+	{
+		ty_min = (y0 - oy) * b;
+		ty_max = (y1 - oy) * b;
+	}
+	else
+	{
+		ty_min = (y1 - oy) * b;
+		ty_max = (y0 - oy) * b;
+	}
+
+	double c = 1.0 / dz;
+	if (c >= 0)
+	{
+		tz_min = (z0 - oz) * c;
+		tz_max = (z1 - oz) * c;
+	}
+	else
+	{
+		tz_min = (z1 - oz) * c;
+		tz_max = (z0 - oz) * c;
+	}
+
+	double t0, t1;
+	if (tx_min > ty_min)
+	{
+		t0 = tx_min;
+	}
+	else
+	{
+		t0 = ty_min;
+	}
+
+	if (tz_min > t0)
+	{
+		t0 = tz_min;
+	}
+
+	if (tx_max < ty_max)
+	{
+		t1 = tx_max;
+	}
+	else
+	{
+		t1 = ty_max;
+	}
+
+	if (tz_max < t1)
+	{
+		t1 = tz_max;
+	}
+
+	if (t0 > t1)
+	{
+		return false;
+	}
+
+	//initial cell coordinates
+	int ix, iy, iz;
+
+	if (mBBox.Inside(ray.mOrigin))
+	{
+		//inside
+		ix = std::clamp((ox - x0) * mNx / (x1 - x0), 0.0, mNx - 1.0);
+		iy = std::clamp((oy - y0) * mNy / (y1 - y0), 0.0, mNy - 1.0);
+		iz = std::clamp((oz - z0) * mNz / (z1 - z0), 0.0, mNz - 1.0);
+	}
+	else
+	{
+		//outside
+		Point3D p = ray.mOrigin + t0 * ray.mDirection;
+		ix = std::clamp((p.mPosX - x0) * mNx / (x1 - x0), 0.0, mNx - 1.0);
+		iy = std::clamp((p.mPosY - y0) * mNy / (y1 - y0), 0.0, mNy - 1.0);
+		iz = std::clamp((p.mPosZ - z0) * mNz / (z1 - z0), 0.0, mNz - 1.0);
+	}
+
+	//ray parameter per cell in x,y,z dir
+	double dtx = (tx_max - tx_min) / mNx;
+	double dty = (ty_max - ty_min) / mNy;
+	double dtz = (tz_max - tz_min) / mNz;
+
+	double tx_next, ty_next, tz_next;
+	int ix_step, iy_step, iz_step;
+	int ix_stop, iy_stop, iz_stop;
+
+	if (dx > 0)
+	{
+		tx_next = tx_min + (ix + 1) * dtx;
+		ix_step = 1;
+		ix_stop = mNx;
+	}
+	else
+	{
+		tx_next = tx_min + (mNx - ix) * dtx;
+		ix_step = -1;
+		ix_stop = -1;
+	}
+
+	if (dx == 0.0)
+	{
+		tx_next = kHugeValue;
+		ix_step = -1;
+		ix_stop = -1;
+	}
+
+	if (dy > 0)
+	{
+		ty_next = ty_min + (iy + 1) * dty;
+		iy_step = 1;
+		iy_stop = mNy;
+	}
+	else
+	{
+		ty_next = ty_min + (mNy - iy) * dty;
+		iy_step = -1;
+		iy_stop = -1;
+	}
+
+	if (dy == 0.0)
+	{
+		ty_next = kHugeValue;
+		iy_step = -1;
+		iy_stop = -1;
+	}
+
+	if (dz > 0)
+	{
+		tz_next = tz_min + (iz + 1) * dtz;
+		iz_step = 1;
+		iz_stop = mNz;
+	}
+	else
+	{
+		tz_next = tz_min + (mNz - iz) * dtz;
+		iz_step = -1;
+		iz_stop = -1;
+	}
+
+	if (dz == 0.0)
+	{
+		tz_next = kHugeValue;
+		iz_step = -1;
+		iz_stop = -1;
+	}
+
+	while (true)
+	{
+		std::shared_ptr<GeometricObject> object_ptr = mCells[ix + mNx * iy + mNx * mNy * iz];
+
+		if (tx_next < ty_next && tx_next < tz_next)
+		{
+			if (object_ptr && object_ptr->Shadow_hit(ray, t) && t < tx_next)
+			{
+				return true;
+			}
+
+			tx_next += dtx;
+			ix += ix_step;
+			if (ix == ix_stop)
+			{
+				return false;
+			}
+		}
+		else
+		{
+			if (ty_next < tz_next)
+			{
+				if (object_ptr && object_ptr->Shadow_hit(ray, t) && t < ty_next)
+				{
+					return true;
+				}
+
+				ty_next += dty;
+				iy += iy_step;
+
+				if (iy == iy_stop)
+				{
+					return false;
+				}
+			}
+			else
+			{
+				if (object_ptr && object_ptr->Shadow_hit(ray, t) && t < tz_next)
+				{
+					return true;
+				}
+
+				tz_next += dtz;
+				iz += iz_step;
+
+				if (iz == iz_stop)
+				{
+					return false;
+				}
+			}
+		}
+	}
 }
 
 Point3D Grid::MinCoordinates()

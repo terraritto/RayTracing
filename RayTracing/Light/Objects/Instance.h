@@ -18,6 +18,9 @@ public:
 	void SetObject(std::shared_ptr<GeometricObject> obj_ptr);
 	void SetMaterial(std::shared_ptr<Material> material_ptr) override;
 
+	void ComputeBoundingBox();
+	BBox GetBoundingBox() const override;
+
 	// affine transformation
 	void Translate(const Vector3D& trans);
 	void Translate(const double dx, const double dy, const double dz);
@@ -30,4 +33,7 @@ private:
 	std::shared_ptr<GeometricObject> mObjectPtr;
 	Matrix mInvMatrix;
 	bool mTransformTheTexture;
+	
+	static Matrix mForwardMatrix;
+	BBox mBbox;
 };
