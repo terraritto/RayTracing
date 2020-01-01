@@ -1,4 +1,5 @@
 #include "Grid.h"
+#include "Triangle.h"
 
 Grid::Grid()
 	: Compound()
@@ -42,6 +43,104 @@ std::shared_ptr<Grid> Grid::Clone()
 BBox Grid::GetBoundingBox() const
 {
 	return mBBox;
+}
+
+void Grid::TessellateFlatSphere(const int horizontalSteps, const int verticalSteps)
+{
+	// define the top triangles which all touch the north pole
+	int k = 1;
+
+	for (int j = 0; j <= horizontalSteps - 1; j++)
+	{
+		//define vertices
+		Point3D v0(0, 1, 0);
+		Point3D v1(
+			std::sin(2.0 * PI * j / horizontalSteps) * std::sin(PI * k / verticalSteps),
+			std::cos(PI * k / verticalSteps),
+			std::cos(2.0 * PI * j / horizontalSteps) * std::sin(PI * k / verticalSteps)
+		);
+		Point3D v2(
+			std::sin(2.0 * PI * (j+1) / horizontalSteps) * std::sin(PI * k / verticalSteps),
+			std::cos(PI * k / verticalSteps),
+			std::cos(2.0 * PI * (j+1) / horizontalSteps) * std::sin(PI * k / verticalSteps)
+		);
+
+		std::shared_ptr<Triangle> triangle_ptr = std::make_shared<Triangle>(v0, v1, v2);
+		mObjects.push_back(triangle_ptr);
+	}
+
+	// define the buttom triangles which all touch the south pole
+	k = verticalSteps - 1;
+	for (int j = 0; j <= horizontalSteps - 1; j++)
+	{
+		//define vertices
+		Point3D v0(
+			std::sin(2.0 * PI * j / horizontalSteps) * std::sin(PI * k / verticalSteps),
+			std::cos(PI * k / verticalSteps),
+			std::cos(2.0 * PI * j / horizontalSteps) * std::sin(PI * k / verticalSteps)
+		);
+		Point3D v1(0, -1, 0);
+
+		Point3D v2(
+			std::sin(2.0 * PI * (j + 1) / horizontalSteps) * std::sin(PI * k / verticalSteps),
+			std::cos(PI * k / verticalSteps),
+			std::cos(2.0 * PI * (j + 1) / horizontalSteps) * std::sin(PI * k / verticalSteps)
+		);
+
+		std::shared_ptr<Triangle> triangle_ptr = std::make_shared<Triangle>(v0, v1, v2);
+		mObjects.push_back(triangle_ptr);
+	}
+
+	//define the other triangles
+
+	for (int k = 1; k <= verticalSteps - 2; k++)
+	{
+		for (int j = 0; j <= horizontalSteps - 1; j++)
+		{
+			//define the first triangle
+			Point3D v0(
+				std::sin(2.0 * PI * j / horizontalSteps) * std::sin(PI * (k+1) / verticalSteps),
+				std::cos(PI * (k+1) / verticalSteps),
+				std::cos(2.0 * PI * j / horizontalSteps) * std::sin(PI * (k+1) / verticalSteps)
+			);
+			Point3D v1(
+				std::sin(2.0 * PI * (j+1) / horizontalSteps) * std::sin(PI * (k + 1) / verticalSteps),
+				std::cos(PI * (k + 1) / verticalSteps),
+				std::cos(2.0 * PI * (j+1) / horizontalSteps) * std::sin(PI * (k + 1) / verticalSteps)
+			);
+
+			Point3D v2(
+				std::sin(2.0 * PI * j / horizontalSteps) * std::sin(PI * k / verticalSteps),
+				std::cos(PI * k / verticalSteps),
+				std::cos(2.0 * PI * j / horizontalSteps) * std::sin(PI * k / verticalSteps)
+			);
+
+			std::shared_ptr<Triangle> triangle_ptr1 = std::make_shared<Triangle>(v0, v1, v2);
+			mObjects.push_back(triangle_ptr1);
+
+			//define the second triangle
+			v0 = Point3D(
+				std::sin(2.0 * PI * (j+1) / horizontalSteps) * std::sin(PI * k / verticalSteps),
+				std::cos(PI * k / verticalSteps),
+				std::cos(2.0 * PI * (j+1) / horizontalSteps) * std::sin(PI * k / verticalSteps)
+			);
+			v1 = Point3D(
+				std::sin(2.0 * PI * j / horizontalSteps) * std::sin(PI * k / verticalSteps),
+				std::cos(PI * k / verticalSteps),
+				std::cos(2.0 * PI * j / horizontalSteps) * std::sin(PI * k / verticalSteps)
+			);
+
+			v2 = Point3D(
+				std::sin(2.0 * PI * (j+1) / horizontalSteps) * std::sin(PI * (k+1) / verticalSteps),
+				std::cos(PI * (k+1) / verticalSteps),
+				std::cos(2.0 * PI * (j+1) / horizontalSteps) * std::sin(PI * (k+1) / verticalSteps)
+			);
+
+			std::shared_ptr<Triangle> triangle_ptr2 = std::make_shared<Triangle>(v0, v1, v2);
+			mObjects.push_back(triangle_ptr2);
+
+		}
+	}
 }
 
 void Grid::SetupCells()

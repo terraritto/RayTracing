@@ -12,6 +12,9 @@ public:
 	std::shared_ptr<Grid> Clone();
 	BBox GetBoundingBox() const override;
 
+	//for mesh sphere
+	void TessellateFlatSphere(const int horizontalSteps, const int verticalSteps);
+
 	void SetupCells();
 	virtual bool hit(const Ray& ray, double& t, ShadeRec& s) override;
 	virtual bool Shadow_hit(const Ray& ray, float& tmin) const override;
