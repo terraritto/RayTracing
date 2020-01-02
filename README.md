@@ -72,6 +72,10 @@ use to make primitive object.
 use to combine many Geometric objects or Compound Objects.
 * Instance  
 use to transform object(affine transform)
+* Mesh  
+use to manage vertexes for mesh triangle
+* Mesh Triangle  
+use to make mesh Triangles for smooth shading or flat shading
 
 ## Objects
 * Bounding Box
