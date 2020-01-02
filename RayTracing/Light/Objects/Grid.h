@@ -14,6 +14,7 @@ public:
 
 	//for mesh sphere
 	void TessellateFlatSphere(const int horizontalSteps, const int verticalSteps);
+	void TessellateSmoothSphere(const int horizontalSteps, const int verticalSteps);
 
 	void SetupCells();
 	virtual bool hit(const Ray& ray, double& t, ShadeRec& s) override;
