@@ -87,6 +87,7 @@ use to transform object(affine transform)
 * Sphere
 * Torus
 * Triangle
+* Smooth Triangle (for smooth shading)
 
 ## Acceleration Scheme
 * Grid  
