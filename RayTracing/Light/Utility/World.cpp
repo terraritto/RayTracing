@@ -129,7 +129,10 @@ void World::Build()
 	int num_vertical_steps = 50;
 
 	std::shared_ptr<Grid> grid_ptr = std::make_shared<Grid>();
-	grid_ptr->TessellateFlatSphere(num_horizontal_steps, num_vertical_steps);
+	// flat sphere
+	//grid_ptr->TessellateFlatSphere(num_horizontal_steps, num_vertical_steps);
+	// smooth sphere
+	grid_ptr->TessellateSmoothSphere(num_horizontal_steps, num_vertical_steps);
 	grid_ptr->SetMaterial(phong_ptr);
 	grid_ptr->SetupCells();
 	AddObject(grid_ptr);
