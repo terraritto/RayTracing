@@ -92,6 +92,8 @@ use to make mesh Triangles for smooth shading or flat shading
 * Torus
 * Triangle
 * Smooth Triangle (for smooth shading)
+* Flat Mesh Triangle
+* Smooth Mesh Triangle
 
 ## Acceleration Scheme
 * Grid  
