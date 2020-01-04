@@ -15,6 +15,7 @@ If you run my code, you should download DX library.
 [DX library link](https://dxlib.xsrv.jp/index.html)  
 # CopyLight  
 DX Library Copyright (C) 2001-2019 Takumi Yamada.
+https://github.com/nmwsharp/happly
 # Implement Techniques
 ## Bare-Bone Ray Tracer
 This RayTracer has simle function.  
