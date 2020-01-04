@@ -77,6 +77,11 @@ Normal GeometricObject::GetNormal(const Point3D& p)
 	return Normal();
 }
 
+Normal GeometricObject::GetNormal()
+{
+	return Normal();
+}
+
 BBox GeometricObject::GetBoundingBox() const
 {
 	return BBox();

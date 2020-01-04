@@ -30,6 +30,8 @@ public:
 	virtual Point3D Sample();
 	virtual float pdf(const ShadeRec& sr);
 	virtual Normal GetNormal(const Point3D& p);
+	//for ply file
+	virtual Normal GetNormal();
 	//for BBox
 	virtual BBox GetBoundingBox() const;
 protected:

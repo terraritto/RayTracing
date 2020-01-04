@@ -133,7 +133,7 @@ void MeshTriangle::ComputeNormal(const bool reverse_normal)
 	}
 }
 
-Normal MeshTriangle::GetNormal(const Point3D& p)
+Normal MeshTriangle::GetNormal()
 {
 	return mNormal;
 }

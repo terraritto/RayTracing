@@ -24,7 +24,7 @@ public:
 
 	void ComputeNormal(const bool reverse_normal);
 
-	virtual Normal GetNormal(const Point3D& p) override;
+	Normal GetNormal() override;
 	virtual BBox GetBoundingBox() const override;
 
 };

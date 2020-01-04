@@ -2,9 +2,17 @@
 #include "Triangle.h"
 #include "SmoothTriangle.h"
 
+#include "FlatMeshTriangle.h"
+#include "SmoothMeshTriangle.h"
+#include "../../Additional_Code/ReadPLY.h"
+
+#include "DxLib.h"
+
 Grid::Grid()
 	: Compound()
 	, mNx(0), mNy(0), mNz(0)
+	, mMesh(std::make_shared<Mesh>())
+	, mReverseNormal(false)
 {
 }
 
@@ -12,6 +20,8 @@ Grid::Grid(const Grid& rg)
 	: Compound(rg)
 	, mNx(rg.mNx), mNy(rg.mNy), mNz(rg.mNz)
 	, mBBox(rg.mBBox)
+	, mMesh(rg.mMesh) // maybe change
+	, mReverseNormal(rg.mReverseNormal)
 {
 }
 
@@ -32,6 +42,8 @@ Grid& Grid::operator=(const Grid& rhs)
 	mNy = rhs.mNy;
 	mNz = rhs.mNz;
 	mBBox = rhs.mBBox;
+	mMesh = rhs.mMesh; //maybe change
+	mReverseNormal = rhs.mReverseNormal;
 
 	return *this;
 }
@@ -251,6 +263,11 @@ void Grid::TessellateSmoothSphere(const int horizontalSteps, const int verticalS
 			mObjects.push_back(triangle_ptr2);
 		}
 	}
+}
+
+void Grid::ReadTriangles(std::string fileName, ETriangleType type)
+{
+	ReadPlyFile(fileName, type);
 }
 
 void Grid::SetupCells()
@@ -874,4 +891,116 @@ Point3D Grid::MaxCoordinates()
 	p1.mPosZ += kEpsilon;
 
 	return p1;
+}
+
+void Grid::ReadPlyFile(std::string fileName, ETriangleType type)
+{
+	//read file
+	happly::PLYData plyIn(fileName);
+
+	// exception
+	try
+	{
+		plyIn.validate();
+	}
+	catch (const std::exception & e)
+	{
+		std::cerr << e.what() << std::endl;
+		return;
+	}
+
+	//---objects---
+	//vertex
+	const std::vector<float> vertex_x = plyIn.getElement("vertex").getProperty<float>("x");
+	const std::vector<float> vertex_y = plyIn.getElement("vertex").getProperty<float>("y");
+	const std::vector<float> vertex_z = plyIn.getElement("vertex").getProperty<float>("z");
+	
+	//face
+	std::vector<std::vector<int>> face = plyIn.getElement("face").getListProperty<int>("vertex_indices");
+
+	// num
+	int vertexNum = vertex_x.size();
+	int faceNum = face.size();
+	//---------
+
+	//---set---
+	// objects
+	mObjects.reserve(faceNum);
+	//vertex
+	for (int i = 0; i < vertexNum; i++)
+	{
+		Point3D p(vertex_x[i], vertex_y[i], vertex_z[i]);
+		mMesh->mVertices.push_back(p);
+	}
+
+	mMesh->mNumVertices = vertexNum;
+	mMesh->mNumTriangles = faceNum;
+
+	// face
+	mMesh->mVertexFaces.resize(vertexNum); // vertex size
+	//---------
+
+	//--- make triangle ---
+	if (type == ETriangleType::flat)
+	{
+		for (auto& f : face) {
+			std::shared_ptr<FlatMeshTriangle> triangle_ptr = std::make_shared<FlatMeshTriangle>(mMesh, f[0], f[1], f[2]);
+			triangle_ptr->ComputeNormal(mReverseNormal);
+			mObjects.push_back(triangle_ptr);
+		}
+
+		mMesh->mVertexFaces.erase(mMesh->mVertexFaces.begin(), mMesh->mVertexFaces.end());
+	}
+
+	if (type == ETriangleType::smooth)
+	{
+		int count = 0; //number of feces
+		for (auto& f : face)
+		{
+			std::shared_ptr<SmoothMeshTriangle> triangle_ptr = std::make_shared<SmoothMeshTriangle>(mMesh, f[0], f[1], f[2]);
+			triangle_ptr->ComputeNormal(mReverseNormal);
+			mObjects.push_back(triangle_ptr);
+
+			mMesh->mVertexFaces[f[0]].push_back(count);
+			mMesh->mVertexFaces[f[1]].push_back(count);
+			mMesh->mVertexFaces[f[2]].push_back(count);
+			count++;
+		}
+		ComputeMeshNormals();
+	}
+	//---------------------
+}
+
+void Grid::ComputeMeshNormals()
+{
+	mMesh->mNormals.reserve(mMesh->mNumVertices);
+
+	for (int index = 0; index < mMesh->mNumVertices; index++)
+	{
+		Normal normal;
+
+		// face index for vertex
+		for (int j = 0; j < mMesh->mVertexFaces[index].size(); j++)
+		{
+			normal += mObjects[mMesh->mVertexFaces[index][j]]->GetNormal();
+		}
+
+		if (normal.mPosX == 0.0 && normal.mPosY == 0.0 && normal.mPosZ == 0.0)
+		{
+			normal.mPosY = 1.0;
+		}
+		else
+		{
+			normal.Normalize();
+		}
+
+		mMesh->mNormals.push_back(normal);
+	}
+
+	for (int index = 0; index < mMesh->mNumVertices; index++)
+	{
+		mMesh->mVertexFaces[index].erase(mMesh->mVertexFaces[index].begin(), mMesh->mVertexFaces[index].end());
+	}
+
+	mMesh->mVertexFaces.erase(mMesh->mVertexFaces.begin(), mMesh->mVertexFaces.end());
 }
