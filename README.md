@@ -99,3 +99,8 @@ use to make mesh Triangles for smooth shading or flat shading
 ## Acceleration Scheme
 * Grid  
 It's Regular Grids.
+
+## File Format
+* .ply  
+in grid, .ply can be read.  
+warning: you must '\n' for a new line, not '\r'.
