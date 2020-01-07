@@ -9,6 +9,7 @@ ViewPlane::ViewPlane()
 	, mNumSamples(1)
 	, mGamma(1.0)
 	, mInvGamma(1.0)
+	, mMaxDepth(0)
 	, mIsShowOutOfGamut(false)
 	, mSamplerPtr(nullptr)
 {
@@ -22,6 +23,7 @@ ViewPlane::ViewPlane(const ViewPlane& vp)
 	, mNumSamples(vp.mNumSamples)
 	, mGamma(vp.mGamma)
 	, mInvGamma(vp.mInvGamma)
+	, mMaxDepth(vp.mMaxDepth)
 	, mIsShowOutOfGamut(vp.mIsShowOutOfGamut)
 	, mSamplerPtr(vp.mSamplerPtr)
 {
@@ -41,6 +43,7 @@ ViewPlane& ViewPlane::operator=(const ViewPlane& rhs)
 	mNumSamples = rhs.mNumSamples;
 	mGamma = rhs.mGamma;
 	mInvGamma = rhs.mInvGamma;
+	mMaxDepth = rhs.mMaxDepth;
 	mIsShowOutOfGamut = rhs.mIsShowOutOfGamut;
 	mSamplerPtr = rhs.mSamplerPtr;
 
@@ -108,4 +111,9 @@ void ViewPlane::SetGamma(const float gamma)
 void ViewPlane::SetIsShowOutOfGamut(const bool is)
 {
 	mIsShowOutOfGamut = is;
+}
+
+void ViewPlane::SetMaxDepth(const int depth)
+{
+	mMaxDepth = depth;
 }

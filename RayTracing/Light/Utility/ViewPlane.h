@@ -17,6 +17,7 @@ public:
 	void SetSampler(std::shared_ptr<Sampler> sp);
 	void SetGamma(const float g);
 	void SetIsShowOutOfGamut(const bool is);
+	void SetMaxDepth(const int depth);
 
 	int mHRes; //Horizontal Image Resolution
 	int mVRes; //Vertical Image Resolution
@@ -24,6 +25,7 @@ public:
 	int mNumSamples; // number of samples per pixel
 	float mGamma; //monitor gamma factor
 	float mInvGamma; //one over gamma
+	int mMaxDepth; // max depth for reflective object
 	bool mIsShowOutOfGamut;
 	std::shared_ptr<Sampler> mSamplerPtr;
 };
