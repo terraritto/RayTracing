@@ -14,7 +14,7 @@ public:
 	std::shared_ptr<Phong> Clone() const;
 
 	virtual RGBColor Shade(ShadeRec& s) override;
-	RGBColor AreaLightShade(ShadeRec& sr) override;
+	virtual RGBColor AreaLightShade(ShadeRec& sr) override;
 
 	void SetKa(float ka);
 	void SetKd(float kd);

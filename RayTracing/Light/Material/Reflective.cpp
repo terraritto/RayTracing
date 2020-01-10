@@ -82,3 +82,20 @@ RGBColor Reflective::Shade(ShadeRec& sr)
 
 	return L;
 }
+
+RGBColor Reflective::AreaLightShade(ShadeRec& sr)
+{
+	RGBColor L(Phong::Shade(sr));
+
+	Vector3D wo = -sr.mRay.mDirection;
+	Vector3D wi;
+	RGBColor fr = mReflectiveBRDF->SampleFunc(sr, wo, wi);
+
+	Ray reflectedRay(sr.mHitPoint, wi);
+
+	L += fr * sr.mWorld.mTracerPtr->TraceRay(reflectedRay, sr.mDepth + 1) *
+		(sr.mNormal * wi);
+
+	return L;
+
+}

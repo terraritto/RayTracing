@@ -24,6 +24,7 @@
 #include "../Tracer/MultipleObjects.h"
 #include "../Tracer/RayCast.h"
 #include "../Tracer/AreaLights.h"
+#include "../Tracer/Whitted.h"
 //Utility
 #include "World.h"
 //Sampler
@@ -52,9 +53,11 @@
 #include "../Material/Phong.h"
 #include "../Material/Plastic.h"
 #include "../Material/Emissive.h"
+#include "../Material/Reflective.h"
 //BRDF
 #include "../BRDF/GlossySpecular.h"
 #include "../BRDF/Lambertian.h"
+#include "../BRDF/PerrfectSpecular.h"
 //DX library
 #include "DxLib.h"
 //STL
@@ -81,94 +84,132 @@ World::~World()
 
 void World::Build()
 {
-	int numSamples = 1;
+	int numSamples = 100;
 
 	//set View Plane
-	mViewPlane.SetHRes(500);
+	mViewPlane.SetHRes(600);
 	mViewPlane.SetVRes(400);
 	mViewPlane.SetPixelSize(1.0);
 	mViewPlane.SetIsShowOutOfGamut(false);
 	mViewPlane.SetSampler(std::move(std::make_shared<MultiJittered>(numSamples)));
-
-	//set backgroundColor
-	mBackGroundColor = black;
+	mViewPlane.SetMaxDepth(10);
 
 	//set Tracer
-	mTracerPtr = std::make_shared<RayCast>(this);
+	mTracerPtr = std::make_shared<AreaLights>(this);
 
 	//Main Light
-	std::shared_ptr<Ambient> ambientPtr = std::make_shared<Ambient>();
-	ambientPtr->SetScaleRadiance(0.0);
-	SetAmbientLight(ambientPtr);
+	std::shared_ptr<MultiJittered> samplePtr = std::make_shared<MultiJittered>(numSamples);
+
+
+	std::shared_ptr<AmbientOccluder> ambientPtr = std::make_shared<AmbientOccluder>();
+	ambientPtr->SetRadiance(1.0);
+	ambientPtr->SetColor(white);
+	ambientPtr->SetMinAmount(0.5);
+	ambientPtr->SetSampler(samplePtr);
+	SetAmbientLight(ambientPtr); 
 
 	//Add Light
 	std::shared_ptr<Directional> light_ptr = std::make_shared<Directional>();
-	light_ptr->SetDirection(20,40,20);
-	light_ptr->SetScaleRadiance(3.0);
+	light_ptr->SetDirection(150, 50, -50);
+	light_ptr->SetScaleRadiance(4.0);
+	light_ptr->SetColor(1.0, 0.25, 0.0);
 	light_ptr->SetIsShadow(true);
 	AddLight(light_ptr);
 
-	//set object
-	const std::string fileName = "./Additional_File/PLYFiles/bunny/reconstruction/bun_zipper_res2.ply";
-	std::shared_ptr<Grid> grid_ptr = std::make_shared<Grid>();
-	grid_ptr->ReadTriangles(fileName, Grid::ETriangleType::flat);
-	grid_ptr->SetupCells();
+	std::shared_ptr<Emissive> emissivePtr = std::make_shared<Emissive>();
+	emissivePtr->SetLadiance(0.9);
+	emissivePtr->SetCe(1.0, 1.0, 0.5);
 
-	int num_levels = 6;
-	int instances_grid_res = 10;
-	int delta = 0.1;
-	int gap = 0.08;
-	double size = 0.1;
-	double mcx = 0.5;
+	std::shared_ptr<ConcaveSphere> sphere_ptr = std::make_shared<ConcaveSphere>();
+	sphere_ptr->SetRadius(1000000.0);
+	sphere_ptr->SetMaterial(emissivePtr);
+	sphere_ptr->SetIsShadow(false);
+	AddObject(sphere_ptr);
 
-	std::shared_ptr<Grid> current_grid_ptr = grid_ptr;
-
-	//random
-	std::random_device rd;
-	std::mt19937 mt(rd());
-	std::uniform_real_distribution<float> floatRand(0.0f, 1.0f);
-
-	for (int level = 0; level < num_levels; level++)
-	{
-		std::shared_ptr<Grid> instance_grid_ptr = std::make_shared<Grid>();
-
-		for (int i = 0; i < instances_grid_res; i++)
-		{
-			for (int k = 0; k < instances_grid_res; k++)
-			{
-				//set object
-				std::shared_ptr<Phong> phong_ptr1 = std::make_shared<Phong>();
-				phong_ptr1->SetKa(0.2);
-				phong_ptr1->SetKd(0.5);
-				phong_ptr1->SetCd(floatRand(mt),floatRand(mt),floatRand(mt));
-				phong_ptr1->SetKs(0.4);
-				phong_ptr1->SetExp(20);
-
-				std::shared_ptr<Instance> instance_ptr = std::make_shared<Instance>();
-				instance_ptr->SetObject(current_grid_ptr);
-				instance_ptr->SetMaterial(phong_ptr1);
-				instance_ptr->Translate(i * (size + gap), 0.0, k * (size + gap));
-				instance_ptr->ComputeBoundingBox();
-				instance_grid_ptr->AddObject(instance_ptr);
-			}
-		}
-		size = instances_grid_res * size + (instances_grid_res - 1) * gap;
-		gap = delta * size;
-		instance_grid_ptr->SetupCells();
-		current_grid_ptr = instance_grid_ptr;
-	}
-	AddObject(current_grid_ptr);
+	std::shared_ptr<EnvironmentLight> environmentLightPtr = std::make_shared<EnvironmentLight>();
+	environmentLightPtr->SetMaterial(emissivePtr);
+	environmentLightPtr->SetSampler(samplePtr->Clone());
+	environmentLightPtr->SetIsShadow(true);
+	AddLight(environmentLightPtr);
 
 	//Set Camera
 	std::shared_ptr<Pinhole> pinholePtr = std::make_shared<Pinhole>();
-	pinholePtr->SetEye(7 * mcx * size, 4 * mcx * size, 5 * mcx * size);
-	pinholePtr->SetLookAt(mcx * size, 0.0, mcx * size);
-	pinholePtr->SetViewDistance(300000000);
+	pinholePtr->SetEye(100, 45, 100);
+	pinholePtr->SetLookAt(-10, 40, 0);
+	pinholePtr->SetViewDistance(400);
 	pinholePtr->ComputeUVW();
 	SetCamera(pinholePtr);
 
-}
+	//set object
+	std::shared_ptr<Reflective> reflective_ptr1 = std::make_shared<Reflective>();
+	reflective_ptr1->SetKa(0.0);
+	reflective_ptr1->SetKd(0.0);
+	reflective_ptr1->SetCd(black);
+	reflective_ptr1->SetKs(0.0);
+	reflective_ptr1->SetExp(1.0);
+	reflective_ptr1->SetKr(0.9);
+	reflective_ptr1->SetCr(1.0,0.75,0.5);
 
+	float ka = 0.2;
+
+	//large sphere
+	std::shared_ptr<Sphere> sphere_ptr1 = std::make_shared<Sphere>(Point3D(38, 20, -24), 20);
+	sphere_ptr1->SetMaterial(reflective_ptr1);
+	AddObject(sphere_ptr1);
+
+	//small sphere
+	std::shared_ptr<Matte> matte_ptr2 = std::make_shared<Matte>();
+	matte_ptr2->SetKa(ka);
+	matte_ptr2->SetKd(0.5);
+	matte_ptr2->SetCd(0.85);
+
+	std::shared_ptr<Sphere> sphere_ptr2 = std::make_shared<Sphere>(Point3D(34, 12, 13), 12);
+	sphere_ptr2->SetMaterial(matte_ptr2);
+	AddObject(sphere_ptr2);
+
+	//medium sphere
+	std::shared_ptr<Matte> matte_ptr3 = std::make_shared<Matte>();
+	matte_ptr3->SetKa(ka);
+	matte_ptr3->SetKd(0.5);
+	matte_ptr3->SetCd(0.75);
+
+	std::shared_ptr<Sphere> sphere_ptr3 = std::make_shared<Sphere>(Point3D(-7, 15, 42), 16);
+	sphere_ptr3->SetMaterial(reflective_ptr1);
+	AddObject(sphere_ptr3);
+
+	//cylinder
+	std::shared_ptr<Matte> matte_ptr4 = std::make_shared<Matte>();
+	matte_ptr4->SetKa(ka);
+	matte_ptr4->SetKd(0.5);
+	matte_ptr4->SetCd(0.60);
+
+	float bottom = 0.0;
+	float top = 85;
+	float radius = 22;
+	std::shared_ptr<OpenCylinder> cylinder_ptr = std::make_shared<OpenCylinder>(bottom, top, radius);
+	cylinder_ptr->SetMaterial(reflective_ptr1);
+	AddObject(cylinder_ptr);
+
+	// box
+	std::shared_ptr<Matte> matte_ptr5 = std::make_shared<Matte>();
+	matte_ptr5->SetKa(ka);
+	matte_ptr5->SetKd(0.5);
+	matte_ptr5->SetCd(0.95);
+
+	std::shared_ptr<Box> box_ptr = std::make_shared<Box>(Point3D(-35, 0, -110), Point3D(-25, 60, 65));
+	box_ptr->SetMaterial(matte_ptr5);
+	AddObject(box_ptr);
+
+	// ground plane
+	std::shared_ptr<Matte> matte_ptr6 = std::make_shared<Matte>();
+	matte_ptr6->SetKa(0.15);
+	matte_ptr6->SetKd(0.5);
+	matte_ptr6->SetCd(0.7);
+
+	std::shared_ptr<Plane> plane_ptr = std::make_shared<Plane>(Point3D(0, 0.01, 0), Normal(0, 1, 0));
+	plane_ptr->SetMaterial(matte_ptr6);
+	AddObject(plane_ptr);
+}
 
 void World::AddObject(std::shared_ptr<GeometricObject> objectPtr)
 {
@@ -230,16 +271,6 @@ ShadeRec World::HitObjects(const Ray& ray)
 		sr.mNormal = normal;
 		sr.mLocalHitPoint = localHitPoint;
 	}
-
-	//display
-	/*
-	if (mCount > 1000000000)
-	{
-		ScreenFlip();
-		mCount = 0;
-	}
-	mCount++;
-	*/
 
 	return sr;
 }

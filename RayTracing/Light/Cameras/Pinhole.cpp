@@ -109,7 +109,7 @@ void Pinhole::RenderStereo(const World& w, float x, int offset)
 				// TraceRay output black pixel now
 				// so if you run any programs, image is all black.
 				// if you use TraceRay(ray);, you can output ideal images. 
-				L += w.mTracerPtr->TraceRay(ray);
+				L += w.mTracerPtr->TraceRay(ray, depth);
 			}
 			L /= vp.mNumSamples;
 			L *= mExposureTime;
