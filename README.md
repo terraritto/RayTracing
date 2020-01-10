@@ -52,6 +52,8 @@ If you want to use, you must write function:TraceRay(ray,depth).
 ## BRDF
 * Lambertian Reflection
 * Glossy Specular (default is Lewis,1994 method. you can use Blinn,1977 method if you want to calculate other method.)
+* Perfect Specular
+
 ## Light
 * Ambient Light
 * Directional Light
@@ -65,6 +67,7 @@ If you want to use, you must write function:TraceRay(ray,depth).
 * phong
 * Plastic
 * emissive
+* Reflective
 
 ## Foundation Objects
 * Geometric object  
