@@ -1,4 +1,5 @@
 #include "GlossySpecular.h"
+#include "../Sampler/MultiJittered.h"
 #include <cmath>
 #include "DxLib.h"
 
@@ -36,6 +37,30 @@ RGBColor GlossySpecular::Func(const ShadeRec& sr, const Vector3D& wo, const Vect
 	}
 
 	return L;
+}
+
+RGBColor GlossySpecular::SampleFunc(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi, float& pdf) const
+{
+	float nDotWo = sr.mNormal * wo;
+	Vector3D r = -wo + 2.0 * sr.mNormal * nDotWo;
+
+	Vector3D w = r;
+	Vector3D u = Vector3D(0.00424, 1, 0.00764) ^ w;
+	u.Normalize();
+	Vector3D v = u ^ w;
+
+	Point3D sp = mSamplerPtr->SampleHemisphere();
+	wi = sp.mPosX * u + sp.mPosY * v + sp.mPosZ * w;
+
+	if (sr.mNormal * wi < 0.0)
+	{
+		wi = -sp.mPosX * u - sp.mPosY * v + sp.mPosZ * w;
+	}
+
+	float phong_lobe = std::pow(r * wi, mExp);
+	pdf = phong_lobe * (sr.mNormal * wi);
+
+	return mKs * mCs * phong_lobe;
 }
 
 
@@ -89,4 +114,16 @@ void GlossySpecular::SetCs(const float c)
 	mCs.mRed = c;
 	mCs.mGreen = c;
 	mCs.mBlue = c;
+}
+
+void GlossySpecular::SetSampler(std::shared_ptr<Sampler> sp, const float exp)
+{
+	mSamplerPtr = sp;
+	mSamplerPtr->MapSamplesToHemisphere(exp);
+}
+
+void GlossySpecular::SetSamples(const int numSamples, const float exp)
+{
+	mSamplerPtr = std::make_shared<MultiJittered>(numSamples);
+	mSamplerPtr->MapSamplesToHemisphere(exp);
 }
