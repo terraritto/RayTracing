@@ -448,21 +448,28 @@ bool Grid::hit(const Ray& ray, double& t, ShadeRec& s)
 
 	//initial cell coordinates
 	int ix, iy, iz;
-
+	int i = 0;
 	if (mBBox.Inside(ray.mOrigin))
 	{
 		//inside
 		ix = std::clamp((ox - x0) * mNx / (x1 - x0), 0.0, mNx - 1.0);
 		iy = std::clamp((oy - y0) * mNy / (y1 - y0), 0.0, mNy - 1.0);
 		iz = std::clamp((oz - z0) * mNz / (z1 - z0), 0.0, mNz - 1.0);
+		i = 1;
 	}
 	else
 	{
 		//outside
+		if (isnan(t0))
+		{
+			// I don't know why nan is stored.
+			return false;
+		}
 		Point3D p = ray.mOrigin + t0 * ray.mDirection;
 		ix = std::clamp((p.mPosX - x0) * mNx / (x1 - x0), 0.0, mNx - 1.0);
 		iy = std::clamp((p.mPosY - y0) * mNy / (y1 - y0), 0.0, mNy - 1.0);
 		iz = std::clamp((p.mPosZ - z0) * mNz / (z1 - z0), 0.0, mNz - 1.0);
+		i = 2;
 	}
 
 	//ray parameter per cell in x,y,z dir

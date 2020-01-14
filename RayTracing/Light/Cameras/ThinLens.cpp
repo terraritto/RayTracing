@@ -7,7 +7,7 @@ ThinLens::ThinLens()
 	, mFocalLength(75.0f)
 	, mZoom(1.0f)
 {
-
+	
 }
 
 ThinLens::ThinLens(const ThinLens& tl)

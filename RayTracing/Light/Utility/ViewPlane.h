@@ -21,7 +21,7 @@ public:
 
 	int mHRes; //Horizontal Image Resolution
 	int mVRes; //Vertical Image Resolution
-	int mPixelSize; //Pixel Size
+	float mPixelSize; //Pixel Size
 	int mNumSamples; // number of samples per pixel
 	float mGamma; //monitor gamma factor
 	float mInvGamma; //one over gamma

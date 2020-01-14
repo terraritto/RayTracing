@@ -17,6 +17,7 @@ public:
 	virtual bool hit(const Ray& ray, double& t, ShadeRec& s);
 	bool Shadow_hit(const Ray& ray, float& t) const override;
 	Normal GetNormal(const int faceHit) const;
+	BBox GetBoundingBox() const override;
 
 	void SetP0(const Point3D p0);
 	Point3D GetP0() const;

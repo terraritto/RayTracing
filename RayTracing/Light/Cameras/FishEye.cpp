@@ -48,20 +48,22 @@ Vector3D FishEye::GetDirection(const Point2D& p, const int hRes, const int vRes,
 	if (r <= 1.0)
 	{
 		float rad = std::sqrt(r);
-		float psi = r * mPsiMax * PI_ON_180;
+		float psi = rad * mPsiMax * PI_ON_180 / 2;
 		float sinPsi = std::sin(psi);
 		float cosPsi = std::cos(psi);
 		float sinAlpha = pn.mPosY / rad;
 		float cosAlpha = pn.mPosX / rad;
 		Vector3D dir =
 			sinPsi * cosAlpha * mU
-			+ sinPsi * cosAlpha * mV
+			+ sinPsi * sinAlpha * mV
 			- cosPsi * mW;
 
 		return dir;
 	}
-
-	return Vector3D(0.0);
+	else
+	{
+		return Vector3D(0.0);
+	}
 }
 
 void FishEye::RenderScene(const World& w)
@@ -71,7 +73,7 @@ void FishEye::RenderScene(const World& w)
 	int hRes = vp.mHRes;
 	int vRes = vp.mVRes;
 	float s = vp.mPixelSize;
-	float radSq; //sum of quares of normalized device coordinates
+	float radSq; //sum of squares of normalized device coordinates
 	Ray ray;
 	int depth = 0;
 	Point2D sp; // sample point in [0,1] x [0,1]
@@ -94,7 +96,7 @@ void FishEye::RenderScene(const World& w)
 				ray.mDirection = GetDirection(pp, hRes, vRes, s, radSq);
 				if (radSq <= 1.0)
 				{
-					L += w.mTracerPtr->TraceRay(ray);
+					L += w.mTracerPtr->TraceRay(ray,depth);
 				}
 			}
 

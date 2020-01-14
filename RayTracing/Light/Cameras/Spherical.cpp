@@ -48,8 +48,8 @@ Vector3D Spherical::GetDirection(const Point2D& pp, const int hRes, const int vR
 	Point2D pn(2.0 / (s * hRes) * pp.mPosX, 2.0 / (s * vRes) * pp.mPosY);
 
 	// compute angle
-	float lambda = pn.mPosX * mLambdaMax * PI_ON_180;
-	float psi = pn.mPosY * mPsiMax * PI_ON_180;
+	float lambda = 0.5 * pn.mPosX * mLambdaMax * PI_ON_180;
+	float psi = 0.5 * pn.mPosY * mPsiMax * PI_ON_180;
 
 	// compute phi and theta
 	float phi = PI - lambda;
@@ -92,7 +92,7 @@ void Spherical::RenderScene(const World& w)
 				pp.mPosX = s * (c - 0.5 * hRes + sp.mPosX);
 				pp.mPosY = s * (r - 0.5 * vRes + sp.mPosY);
 				ray.mDirection = GetDirection(pp, hRes, vRes, s);
-				L += w.mTracerPtr->TraceRay(ray);
+				L += w.mTracerPtr->TraceRay(ray, depth);
 			
 			}
 

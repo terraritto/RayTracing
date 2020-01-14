@@ -250,6 +250,11 @@ Normal Box::GetNormal(const int faceHit) const
 	}
 }
 
+BBox Box::GetBoundingBox() const
+{
+	return BBox(mP0-kEpsilon,mP1+kEpsilon);
+}
+
 void Box::SetP0(const Point3D p0)
 {
 	mP0 = p0;

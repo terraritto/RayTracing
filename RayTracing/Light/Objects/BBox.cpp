@@ -45,37 +45,37 @@ bool BBox::hit(const Ray& ray) const
 	double a = 1.0 / dir.mPosX;
 	if (a >= 0)
 	{
-		tMin = (mP0.mPosX - origin.mPosX) * a;
-		tMax = (mP1.mPosX - origin.mPosX) * a;
+		tMin.mPosX = (mP0.mPosX - origin.mPosX) * a;
+		tMax.mPosX = (mP1.mPosX - origin.mPosX) * a;
 	}
 	else
 	{
-		tMin = (mP1.mPosX - origin.mPosX) * a;
-		tMax = (mP0.mPosX - origin.mPosX) * a;
+		tMin.mPosX = (mP1.mPosX - origin.mPosX) * a;
+		tMax.mPosX = (mP0.mPosX - origin.mPosX) * a;
 	}
 
 	double b = 1.0 / dir.mPosY;
 	if (b >= 0)
 	{
-		tMin = (mP0.mPosY - origin.mPosY) * b;
-		tMax = (mP1.mPosY - origin.mPosY) * b;
+		tMin.mPosY = (mP0.mPosY - origin.mPosY) * b;
+		tMax.mPosY = (mP1.mPosY - origin.mPosY) * b;
 	}
 	else
 	{
-		tMin = (mP1.mPosY - origin.mPosY) * b;
-		tMax = (mP0.mPosY - origin.mPosY) * b;
+		tMin.mPosY = (mP1.mPosY - origin.mPosY) * b;
+		tMax.mPosY = (mP0.mPosY - origin.mPosY) * b;
 	}
 
 	double c = 1.0 / dir.mPosZ;
 	if (c >= 0)
 	{
-		tMin = (mP0.mPosZ - origin.mPosZ) * c;
-		tMax = (mP1.mPosZ - origin.mPosZ) * c;
+		tMin.mPosZ = (mP0.mPosZ - origin.mPosZ) * c;
+		tMax.mPosZ = (mP1.mPosZ - origin.mPosZ) * c;
 	}
 	else
 	{
-		tMin = (mP1.mPosZ - origin.mPosZ) * c;
-		tMax = (mP0.mPosZ - origin.mPosZ) * c;
+		tMin.mPosZ = (mP1.mPosZ - origin.mPosZ) * c;
+		tMax.mPosZ = (mP0.mPosZ - origin.mPosZ) * c;
 	}
 
 	double t0, t1;
