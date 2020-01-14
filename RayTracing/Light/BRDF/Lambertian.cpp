@@ -1,5 +1,6 @@
 #include "Lambertian.h"
 #include "..//Maths/Constants.h"
+#include "../Sampler/MultiJittered.h"
 
 Lambertian::Lambertian()
 	: BRDF()
@@ -14,7 +15,7 @@ Lambertian::Lambertian(const Lambertian& lamb)
 	, mKd(lamb.mKd)
 	, mCd(lamb.mCd)
 {
-
+	mSamplerPtr->MapSamplesToHemisphere(1);
 }
 
 Lambertian& Lambertian::operator=(const Lambertian& rhs)
@@ -49,6 +50,16 @@ RGBColor Lambertian::Func(const ShadeRec& sr, const Vector3D& wo, const Vector3D
 
 RGBColor Lambertian::SampleFunc(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi, float& pdf) const
 {
+	Vector3D w = sr.mNormal;
+	Vector3D v = Vector3D(0.0034, 1.0, 0.0071) ^ w;
+	v.Normalize();
+	Vector3D u = v ^ w;
+
+	Point3D sp = mSamplerPtr->SampleHemisphere();
+	wi = sp.mPosX * u + sp.mPosY * v + sp.mPosZ * w;
+	wi.Normalize();
+	pdf = sr.mNormal * wi * INVPI;
+
 	return mKd * mCd * INVPI;
 }
 
@@ -84,5 +95,17 @@ void Lambertian::SetCd(const float c)
 	mCd.mRed = c;
 	mCd.mGreen = c;
 	mCd.mBlue = c;
+}
+
+void Lambertian::SetSampler(std::shared_ptr<Sampler> sp)
+{
+	mSamplerPtr = sp;
+	mSamplerPtr->MapSamplesToHemisphere(1);
+}
+
+void Lambertian::SetSamples(const int numSamples)
+{
+	mSamplerPtr = std::make_shared<MultiJittered>(numSamples);
+	mSamplerPtr->MapSamplesToHemisphere(1);
 }
 

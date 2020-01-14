@@ -15,6 +15,21 @@ Rectangler::Rectangler(Point3D p0, Vector3D a, Vector3D b, Normal n)
 	mNormal.Normalize();
 }
 
+Rectangler::Rectangler(Point3D p0, Vector3D a, Vector3D b)
+	: GeometricObject()
+	, mP0(p0)
+	, mA(a)
+	, mB(b)
+	, mALenSquared(a.LengthSq())
+	, mBLenSquared(b.LengthSq())
+	, mArea(a.Length() * b.Length())
+	, mInvArea(1.0/mArea)
+	, mSamplePtr(nullptr)
+{
+	mNormal = a ^ b;
+	mNormal.Normalize();
+}
+
 Rectangler::Rectangler(const Rectangler& rect)
 	: GeometricObject(rect)
 	, mP0(rect.mP0)

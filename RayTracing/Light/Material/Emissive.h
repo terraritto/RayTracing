@@ -16,6 +16,8 @@ public:
 	void SetCe(const float r, const float g, const float b);
 	void SetCe(const float c);
 	RGBColor Shade(ShadeRec& sr) override;
+	RGBColor PathShade(ShadeRec& sr) override;
+	RGBColor GlobalShade(ShadeRec& sr) override;
 	RGBColor AreaLightShade(ShadeRec& sr) override;
 	RGBColor GetLe(ShadeRec& sr) const override;
 private:

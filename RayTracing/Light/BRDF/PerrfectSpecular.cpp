@@ -50,7 +50,11 @@ RGBColor PerfectSpecular::SampleFunc(const ShadeRec& sr, const Vector3D& wo, Vec
 
 RGBColor PerfectSpecular::SampleFunc(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi, float& pdf) const
 {
-	return black;
+	float nDotWo = sr.mNormal * wo;
+	wi = -wo + 2.0 * sr.mNormal * nDotWo;
+	pdf = sr.mNormal * wi;
+
+	return mKr * mCr;
 }
 
 RGBColor PerfectSpecular::Rho(const ShadeRec& sr, const Vector3D& wo) const

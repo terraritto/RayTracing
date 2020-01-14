@@ -32,6 +32,11 @@ RGBColor Material::PathShade(ShadeRec& sr)
 	return black;
 }
 
+RGBColor Material::GlobalShade(ShadeRec& sr)
+{
+	return black;
+}
+
 RGBColor Material::GetLe(ShadeRec& sr) const
 {
 	return black;

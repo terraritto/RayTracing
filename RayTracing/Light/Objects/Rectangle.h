@@ -11,6 +11,7 @@ class Rectangler : public GeometricObject
 {
 public:
 	Rectangler(Point3D p0, Vector3D a, Vector3D b, Normal n);
+	Rectangler(Point3D p0, Vector3D a, Vector3D b);
 	Rectangler(const Rectangler& rect);
 	Rectangler& operator=(const Rectangler& rhs);
 	std::shared_ptr<Rectangler> Clone() const;

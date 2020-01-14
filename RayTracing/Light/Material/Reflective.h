@@ -18,8 +18,9 @@ public:
 	void SetCr(const float c);
 
 	RGBColor Shade(ShadeRec& s) override;
+	RGBColor PathShade(ShadeRec& sr) override;
+	RGBColor GlobalShade(ShadeRec& sr) override;
 	RGBColor AreaLightShade(ShadeRec& sr) override;
-
 private:
 	std::shared_ptr<PerfectSpecular> mReflectiveBRDF;
 };

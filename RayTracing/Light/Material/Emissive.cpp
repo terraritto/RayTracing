@@ -66,6 +66,35 @@ RGBColor Emissive::Shade(ShadeRec& sr)
 	return black;
 }
 
+RGBColor Emissive::PathShade(ShadeRec& sr)
+{
+	if (-sr.mNormal * sr.mRay.mDirection > 0.0)
+	{
+		return mLs * mCe;
+	}
+	else
+	{
+		return black;
+	}
+}
+
+RGBColor Emissive::GlobalShade(ShadeRec& sr)
+{
+	if (sr.mDepth == 1)
+	{
+		return black;
+	}
+	
+	if (-sr.mNormal * sr.mRay.mDirection > 0.0)
+	{
+		return mLs * mCe;
+	}
+	else
+	{
+		return black;
+	}
+}
+
 RGBColor Emissive::AreaLightShade(ShadeRec& sr)
 {
 	if (-sr.mNormal * sr.mRay.mDirection > 0.0)

@@ -109,6 +109,16 @@ void Matte::SetCd(const float c)
 	mDiffuseBRDF->SetCd(c);
 }
 
+void Matte::SetSampler(std::shared_ptr<Sampler> sp)
+{
+	mDiffuseBRDF->SetSampler(sp);
+}
+
+void Matte::SetSamples(const int numSamples)
+{
+	mDiffuseBRDF->SetSamples(numSamples);
+}
+
 RGBColor Matte::Shade(ShadeRec& sr)
 {
 	Vector3D wo = -sr.mRay.mDirection;
@@ -135,6 +145,39 @@ RGBColor Matte::Shade(ShadeRec& sr)
 			}
 		}
 	}
+
+	return L;
+}
+
+RGBColor Matte::PathShade(ShadeRec& sr)
+{
+	Vector3D wi;
+	Vector3D wo = -sr.mRay.mDirection;
+	float pdf;
+	RGBColor f = mDiffuseBRDF->SampleFunc(sr, wo, wi, pdf);
+	float nDotWi = sr.mNormal * wi;
+	Ray reflected_ray(sr.mHitPoint, wi);
+
+	return (f * sr.mWorld.mTracerPtr->TraceRay(reflected_ray, sr.mDepth + 1) * nDotWi / pdf);
+}
+
+RGBColor Matte::GlobalShade(ShadeRec& sr)
+{
+	RGBColor L;
+	
+	if (sr.mDepth == 0)
+	{
+		L = AreaLightShade(sr);
+	}
+
+	Vector3D wi;
+	Vector3D wo = -sr.mRay.mDirection;
+	float pdf;
+	RGBColor f = mDiffuseBRDF->SampleFunc(sr, wo, wi, pdf);
+	float nDotWi = sr.mNormal * wi;
+	Ray reflected_ray(sr.mHitPoint, wi);
+
+	L += (f * sr.mWorld.mTracerPtr->TraceRay(reflected_ray, sr.mDepth + 1) * nDotWi / pdf);
 
 	return L;
 }

@@ -7,7 +7,7 @@ Reflective::Reflective()
 }
 
 Reflective::Reflective(const Reflective& re)
-	: Phong()
+	: Phong(re)
 {
 	if (re.mReflectiveBRDF)
 	{
@@ -15,7 +15,7 @@ Reflective::Reflective(const Reflective& re)
 	}
 	else
 	{
-		mReflectiveBRDF = nullptr;
+		mReflectiveBRDF = std::make_shared<PerfectSpecular>();
 	}
 }
 
@@ -44,7 +44,7 @@ Reflective& Reflective::operator=(const Reflective& rhs)
 
 std::shared_ptr<Reflective> Reflective::Clone() const
 {
-	return std::make_shared<Reflective>();
+	return std::make_shared<Reflective>(*this);
 }
 
 void Reflective::SetKr(const float k)
@@ -81,6 +81,35 @@ RGBColor Reflective::Shade(ShadeRec& sr)
 		(sr.mNormal * wi);
 
 	return L;
+}
+
+RGBColor Reflective::PathShade(ShadeRec& sr)
+{
+	Vector3D wo = -sr.mRay.mDirection;
+	Vector3D wi;
+	float pdf;
+	RGBColor fr = mReflectiveBRDF->SampleFunc(sr, wo, wi, pdf);
+	Ray reflected_ray(sr.mHitPoint, wi);
+
+	return fr * sr.mWorld.mTracerPtr->TraceRay(reflected_ray, sr.mDepth + 1) * (sr.mNormal * wi) / pdf;
+}
+
+RGBColor Reflective::GlobalShade(ShadeRec& sr)
+{
+	Vector3D wo = -sr.mRay.mDirection;
+	Vector3D wi;
+	float pdf;
+	RGBColor fr = mReflectiveBRDF->SampleFunc(sr, wo, wi, pdf);
+	Ray reflected_ray(sr.mHitPoint, wi);
+
+	if (sr.mDepth == 0)
+	{
+		return fr * sr.mWorld.mTracerPtr->TraceRay(reflected_ray, sr.mDepth + 2) * (sr.mNormal * wi) / pdf;
+	}
+	else
+	{
+		return fr * sr.mWorld.mTracerPtr->TraceRay(reflected_ray, sr.mDepth + 1) * (sr.mNormal * wi) / pdf;
+	}
 }
 
 RGBColor Reflective::AreaLightShade(ShadeRec& sr)
