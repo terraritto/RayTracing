@@ -17,10 +17,13 @@ If you run my code, you should download DX library.
 DX Library Copyright (C) 2001-2019 Takumi Yamada.  
 https://github.com/nmwsharp/happly
 # Implement Techniques
-## Bare-Bone Ray Tracer
-This RayTracer has simle function.  
-If you trace, this Tracer can't compute shading.  
-Object which you can use are Sphere and Plane.    
+## Tracer
+* AreaLights
+* RayCast
+* Whitted
+* PathTrace
+* GlobalTrace
+    
  
 ## Sampling Techniques 
 * Regular Sampling   
@@ -35,13 +38,7 @@ Object which you can use are Sphere and Plane.
 * square -> disk (Shirley's concentric map)
 * square -> hemispehre
 
-
-
 ## Camera
-I implement many cameras, but I often use Pinhole camera.  
-Therefore I don't write to use RayCast class with other cameras.
-If you want to use, you must write function:TraceRay(ray,depth).
-
 * Orthographic Camera
 * Pinhole Camera
 * ThinLens Camera
