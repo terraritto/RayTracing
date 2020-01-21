@@ -8,7 +8,7 @@ class Phong : public Material
 public:
 	Phong();
 	Phong(const Phong& ph);
-	~Phong();
+	virtual ~Phong();
 	Phong& operator=(const Phong& rhs);
 
 	std::shared_ptr<Phong> Clone() const;
