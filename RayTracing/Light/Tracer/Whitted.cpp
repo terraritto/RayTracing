@@ -36,6 +36,7 @@ RGBColor Whitted::TraceRay(const Ray ray, float& tMin, const int depth) const
 {
 	if (depth > mWorld->mViewPlane.mMaxDepth)
 	{
+		tMin = kHugeValue;
 		return black;
 	}
 	else

@@ -108,7 +108,7 @@ RGBColor operator*(const float a, const RGBColor& c)
 
 RGBColor RGBColor::PowColor(float p) const
 {
-	return (RGBColor(std::pow(mRed, p), std::pow(mGreen, p), std::pow(mBlue, p)));
+	return (RGBColor(std::powf(mRed, p), std::powf(mGreen, p), std::powf(mBlue, p)));
 }
 
 float RGBColor::Average() const
