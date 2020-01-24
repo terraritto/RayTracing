@@ -50,6 +50,11 @@ https://github.com/nmwsharp/happly
 * Lambertian Reflection
 * Glossy Specular (default is Lewis,1994 method. you can use Blinn,1977 method if you want to calculate other method.)
 * Perfect Specular
+* Fresnel Reflector
+
+## BTDF
+* PerfectTransmitter
+* FresnelTransmitter
 
 ## Light
 * Ambient Light
@@ -60,11 +65,14 @@ https://github.com/nmwsharp/happly
 * Environment Light
 
 ## Material
-* matte
-* phong
+* Matte
+* Phong
 * Plastic
-* emissive
+* Emissive
 * Reflective
+* GlossyReflector
+* Transparent
+* Dielectric
 
 ## Foundation Objects
 * Geometric object  
