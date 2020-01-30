@@ -10,6 +10,7 @@
 class Rectangler : public GeometricObject
 {
 public:
+	Rectangler();
 	Rectangler(Point3D p0, Vector3D a, Vector3D b, Normal n);
 	Rectangler(Point3D p0, Vector3D a, Vector3D b);
 	Rectangler(const Rectangler& rect);

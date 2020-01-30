@@ -1,5 +1,19 @@
 #include "Rectangle.h"
 
+Rectangler::Rectangler()
+	: GeometricObject()
+	, mP0(-1,0,-1)
+	, mA(0,0,2)
+	, mB(2,0,0)
+	, mALenSquared(4.0)
+	, mBLenSquared(4.0)
+	, mNormal(0,1,0)
+	, mArea(4.0)
+	, mInvArea(0.25)
+	, mSamplePtr(nullptr)
+{
+}
+
 Rectangler::Rectangler(Point3D p0, Vector3D a, Vector3D b, Normal n)
 	: GeometricObject()
 	, mP0(p0)
