@@ -9,5 +9,5 @@ public:
 	Texture(const Texture& tex) = default;
 	~Texture() = default;
 
-	virtual RGBColor GetColor(const ShadeRec& sr) const = 0;
+	virtual RGBColor GetColor(const ShadeRec& sr) const { return RGBColor(); }
 };
