@@ -12,6 +12,7 @@ const RGBColor red(1.0, 0.0, 0.0);
 constexpr double 	PI = 3.1415926535897932384;
 constexpr double    TWO_PI = 2 * PI;
 constexpr double    INVPI = 0.3183098861837906715;
+constexpr double    INVTWOPI = 1 / TWO_PI;
 constexpr double    PI_ON_180 = PI / 180;
 
 constexpr double kHugeValue = 1.0E10;
