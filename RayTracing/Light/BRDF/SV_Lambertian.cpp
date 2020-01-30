@@ -5,7 +5,7 @@
 SV_Lambertian::SV_Lambertian()
 	: BRDF()
 	, mKd(0.0)
-	, mCd()
+	, mCd(nullptr)
 {
 
 }
