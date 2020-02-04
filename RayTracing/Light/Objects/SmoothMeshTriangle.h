@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 #include "MeshTriangle.h"
 
 class SmoothMeshTriangle : public MeshTriangle

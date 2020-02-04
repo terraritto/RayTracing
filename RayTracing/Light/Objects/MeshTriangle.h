@@ -23,6 +23,8 @@ public:
 	bool Shadow_hit(const Ray& ray, float& tmin) const override final;
 
 	void ComputeNormal(const bool reverse_normal);
+	float InterpolateU(const float beta, const float gamma);
+	float InterpolateV(const float beta, const float gamma);
 
 	Normal GetNormal() override;
 	virtual BBox GetBoundingBox() const override;

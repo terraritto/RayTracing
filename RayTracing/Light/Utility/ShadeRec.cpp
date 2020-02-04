@@ -12,6 +12,8 @@ ShadeRec::ShadeRec(World& world)
 	, mDir()
 	, mWorld(world)
 	, mT(0.0)
+	, mU(0.0)
+	, mV(0.0)
 {
 
 }
@@ -28,6 +30,8 @@ ShadeRec::ShadeRec(const ShadeRec& sr)
 	, mColor(sr.mColor)
 	, mWorld(sr.mWorld)
 	, mT(sr.mT)
+	, mU(sr.mU)
+	, mV(sr.mV)
 {
 
 }

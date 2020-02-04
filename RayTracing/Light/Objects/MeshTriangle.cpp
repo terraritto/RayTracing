@@ -133,6 +133,25 @@ void MeshTriangle::ComputeNormal(const bool reverse_normal)
 	}
 }
 
+float MeshTriangle::InterpolateU(const float beta, const float gamma)
+{
+	float u = (1 - beta - gamma) * mMeshPtr->mU[mIndex0]
+		+ beta * mMeshPtr->mU[mIndex1]
+		+ gamma * mMeshPtr->mU[mIndex2];
+
+	return u;
+}
+
+float MeshTriangle::InterpolateV(const float beta, const float gamma)
+{
+	float v = (1 - beta - gamma) * mMeshPtr->mV[mIndex0]
+		+ beta * mMeshPtr->mV[mIndex1]
+		+ gamma * mMeshPtr->mV[mIndex2];
+
+	return v;
+
+}
+
 Normal MeshTriangle::GetNormal()
 {
 	return mNormal;

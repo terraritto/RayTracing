@@ -26,6 +26,7 @@ public:
 
 	//to read ply files
 	void ReadTriangles(std::string fileName, ETriangleType type);
+	void ReadUVTriangles(std::string fileName, ETriangleType type);
 
 	void SetupCells();
 	virtual bool hit(const Ray& ray, double& t, ShadeRec& s) override;
@@ -39,6 +40,7 @@ private:
 	Point3D MaxCoordinates(); //compute maximum grid coordinates
 
 	void ReadPlyFile(std::string fileName, ETriangleType type);
+	void ReadUVPlyFile(std::string fileName, ETriangleType type);
 	void ComputeMeshNormals();
 public:
 	std::shared_ptr<Mesh> mMesh; // for triangle

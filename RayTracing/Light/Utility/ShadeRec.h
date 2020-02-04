@@ -21,6 +21,8 @@ public:
 	Vector3D mDir; //for area lights
 	World& mWorld; //world reference for shading
 	double mT;
+	float mU;
+	float mV;
 
 	ShadeRec(World& world);
 	ShadeRec(const ShadeRec& sr);
