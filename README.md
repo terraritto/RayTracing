@@ -51,6 +51,7 @@ https://github.com/nmwsharp/happly
 * Glossy Specular (default is Lewis,1994 method. you can use Blinn,1977 method if you want to calculate other method.)
 * Perfect Specular
 * Fresnel Reflector
+* Texture Lambertian Reflection
 
 ## BTDF
 * PerfectTransmitter
@@ -73,6 +74,7 @@ https://github.com/nmwsharp/happly
 * GlossyReflector
 * Transparent
 * Dielectric
+* Texture Matte
 
 ## Foundation Objects
 * Geometric object  
@@ -103,6 +105,8 @@ use to make mesh Triangles for smooth shading or flat shading
 * Smooth Triangle (for smooth shading)
 * Flat Mesh Triangle
 * Smooth Mesh Triangle
+* Flat UV Mesh Triangle
+* Smooth UV Mesh Triangle
 
 ## Acceleration Scheme
 * Grid  
@@ -112,3 +116,13 @@ It's Regular Grids.
 * .ply  
 in grid, .ply can be read.  
 warning: you must '\n' for a new line, not '\r'.
+
+## Texture
+* Constant Color
+* Image Texture
+
+## Mapping
+* Rectangler Mapping
+* Cylinderical Mapping
+* Spherical Mapping
+* Light Probe Mapping
