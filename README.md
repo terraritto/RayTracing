@@ -120,9 +120,18 @@ warning: you must '\n' for a new line, not '\r'.
 ## Texture
 * Constant Color
 * Image Texture
+* Checker3D
+* PlaneChecker(Checker2D for plane)
+* FBm Texture
+* Ramp FBm Texture
+* Wrapped FBm Texture
 
 ## Mapping
 * Rectangler Mapping
 * Cylinderical Mapping
 * Spherical Mapping
 * Light Probe Mapping
+
+## Noise Generation
+* Cubic function
+* Linear function
