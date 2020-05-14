@@ -37,3 +37,10 @@ bool cbrt(T x)
 int SolveQuadric(std::array<double, 3> c, std::array<double, 2>& s);
 int SolveCubic(std::array<double, 4> c, std::array<double, 3>& s);
 int SolveQuartic(std::array<double, 5> c, std::array<double, 4>& s);
+
+//Heaviside step function
+template<class Type>
+inline auto Heaviside(Type x)
+{
+	return x < 0.0 ? 0.0 : 1.0;
+}

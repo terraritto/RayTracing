@@ -53,6 +53,7 @@
 //Material
 #include "../Material/Matte.h"
 #include "../Material/Phong.h"
+#include "../Material/CookTorrance.h"
 #include "../Material/Plastic.h"
 #include "../Material/Emissive.h"
 #include "../Material/Reflective.h"
@@ -109,203 +110,88 @@ World::~World()
 
 void World::Build()
 {
-	int numSamples = 1000;
+	int numSamples = 16;
 
 	//set View Plane
-	mViewPlane.SetHRes(300);
-	mViewPlane.SetVRes(300);
+	mViewPlane.SetHRes(600);
+	mViewPlane.SetVRes(400);
 	mViewPlane.SetPixelSize(1.0);
 	mViewPlane.SetIsShowOutOfGamut(false);
 	mViewPlane.SetSampler(std::move(std::make_shared<MultiJittered>(numSamples)));
-	mViewPlane.SetMaxDepth(10);
+
+	//set backgroundColor
+	mBackGroundColor = RGBColor(0.0, 0.6588, 1.0);
 
 	//set Tracer
-	//mTracerPtr = std::make_shared<PathTrace>(this);
-	mTracerPtr = std::make_shared<GlobalTrace>(this);
+	mTracerPtr = std::make_shared<RayCast>(this);
 
 	//Main Light
 	std::shared_ptr<Ambient> ambientPtr = std::make_shared<Ambient>();
-	ambientPtr->SetScaleRadiance(0.0);
+	ambientPtr->SetScaleRadiance(0.5);
 	SetAmbientLight(ambientPtr);
 
 	//Set Camera
 	std::shared_ptr<Pinhole> pinholePtr = std::make_shared<Pinhole>();
-	pinholePtr->SetEye(27.6, 27.4, -80.0);
-	pinholePtr->SetLookAt(27.6, 27.4, 0.0);
-	pinholePtr->SetViewDistance(400);
+	pinholePtr->SetEye(7.5, 4, 10);
+	pinholePtr->SetLookAt(-1, 3.7, 0);
+	pinholePtr->SetViewDistance(340);
 	pinholePtr->ComputeUVW();
 	SetCamera(pinholePtr);
 
+	//Light
+	std::shared_ptr<Directional> lightPtr = std::make_shared<Directional>();
+	lightPtr->SetDirection(15, 15, 2.5);
+	lightPtr->SetScaleRadiance(3.0);
+	lightPtr->SetIsShadow(true);
+	AddLight(lightPtr);
+	
+	/*
+	std::shared_ptr<PointLight> lightPtr2 = std::make_shared<PointLight>();
+	lightPtr2->SetLocation(15, 15, 2.5);
+	lightPtr2->SetScaleRadiance(2.0);
+	lightPtr2->SetIsShadow(true);
+	AddLight(lightPtr2);
+
+	//std::shared_ptr<Directional> lightPtr3 = std::make_shared<Directional>();
+	//lightPtr3->SetDirection(1, 1, 0);
+	//lightPtr3->SetScaleRadiance(4.0);
+	//AddLight(lightPtr3);
+	*/
+
 	//set object
-	Point3D p0;
-	Vector3D a, b;
-	Normal normal;
+	std::shared_ptr<CookTorrance> mattePtr1 = std::make_shared<CookTorrance>();
+	mattePtr1->SetKa(0.25);
+	mattePtr1->SetKd(0.75);
+	mattePtr1->SetKs(0.25);
+	mattePtr1->SetAlpha(0.9);
+	mattePtr1->SetFresnel(0.5);
+	mattePtr1->SetCd(1, 1, 0);
+	mattePtr1->SetCs(0.2);
 
-	// box dimension
-	double width = 55.28;
-	double height = 54.88;
-	double depth = 55.92;
+	std::shared_ptr<Sphere> spherePtr1 = std::make_shared<Sphere>(Point3D(3.85, 2.3, -2.55), 2.3);
+	spherePtr1->SetMaterial(mattePtr1);
+	AddObject(spherePtr1);
 
-	// ceiling light
-	std::shared_ptr<Emissive> emissive_ptr = std::make_shared<Emissive>();
-	emissive_ptr->SetCe(1.0, 0.73, 0.4);
-	emissive_ptr->SetLadiance(100);
+	std::shared_ptr<CookTorrance> mattePtr2 = std::make_shared<CookTorrance>();
+	mattePtr2->SetKa(0.45);
+	mattePtr2->SetKd(0.75);
+	mattePtr2->SetKs(0.25);
+	mattePtr2->SetFresnel(0.5);
+	mattePtr2->SetAlpha(0.85);
+	mattePtr2->SetCd(0.75, 0.25, 0);
+	mattePtr2->SetCs(0.2);
+	std::shared_ptr<Sphere> spherePtr2 = std::make_shared<Sphere>(Point3D(-0.7, 1, 4.2), 2);
+	spherePtr2->SetMaterial(mattePtr2);
+	AddObject(spherePtr2);
 
-	p0 = Point3D(21.3, height - 0.001, 22.7);
-	a = Vector3D(0.0, 0.0, 10.5);
-	b = Vector3D(13.0, 0.0, 0.0);
-	normal = Normal(0.0, -1.0, 0.0);
-	std::shared_ptr<Rectangler> light_ptr = std::make_shared<Rectangler>(p0, a, b, normal);
-	light_ptr->SetMaterial(emissive_ptr);
-	light_ptr->SetSampler(std::make_shared<MultiJittered>(numSamples));
-	light_ptr->SetIsShadow(false);
-	AddObject(light_ptr);
-
-	std::shared_ptr<AreaLight> ceiling_light_ptr = std::make_shared<AreaLight>();
-	ceiling_light_ptr->SetObject(light_ptr);
-	ceiling_light_ptr->SetIsShadow(true);
-	AddLight(ceiling_light_ptr);
-
-	//left wall
-	std::shared_ptr<Matte> matte_ptr1 = std::make_shared<Matte>();
-	matte_ptr1->SetKa(0.0);
-	matte_ptr1->SetKd(0.6);
-	matte_ptr1->SetCd(0.57, 0.025, 0.025);
-	matte_ptr1->SetSamples(numSamples);
-
-	p0 = Point3D(width, 0.0, 0.0);
-	a = Vector3D(0.0, 0.0, depth);
-	b = Vector3D(0.0, height, 0.0);
-	normal = Normal(-1.0, 0.0, 0.0);
-	std::shared_ptr<Rectangler> left_wall_ptr = std::make_shared<Rectangler>(p0, a, b, normal);
-	left_wall_ptr->SetMaterial(matte_ptr1);
-	AddObject(left_wall_ptr);
-
-	//right wall
-	std::shared_ptr<Matte> matte_ptr2 = std::make_shared<Matte>();
-	matte_ptr2->SetKa(0.0);
-	matte_ptr2->SetKd(0.6);
-	matte_ptr2->SetCd(0.37, 0.59, 0.2);
-	matte_ptr2->SetSamples(numSamples);
-
-	p0 = Point3D(0.0, 0.0, 0.0);
-	a = Vector3D(0.0, 0.0, depth);
-	b = Vector3D(0.0, height, 0.0);
-	normal = Normal(1.0, 0.0, 0.0);
-	std::shared_ptr<Rectangler> right_wall_ptr = std::make_shared<Rectangler>(p0, a, b, normal);
-	right_wall_ptr->SetMaterial(matte_ptr2);
-	AddObject(right_wall_ptr);
-
-	//back wall
-	std::shared_ptr<Matte> matte_ptr3 = std::make_shared<Matte>();
-	matte_ptr3->SetKa(0.0);
-	matte_ptr3->SetKd(0.6);
-	matte_ptr3->SetCd(1.0);
-	matte_ptr3->SetSamples(numSamples);
-
-	p0 = Point3D(0.0, 0.0, depth);
-	a = Vector3D(width, 0.0, 0.0);
-	b = Vector3D(0.0, height, 0.0);
-	normal = Normal(0.0, 0.0, -1.0);
-	std::shared_ptr<Rectangler> back_wall_ptr = std::make_shared<Rectangler>(p0, a, b, normal);
-	back_wall_ptr->SetMaterial(matte_ptr3);
-	AddObject(back_wall_ptr);
-
-	//floor
-	p0 = Point3D(0.0, 0.0, 0.0);
-	a = Vector3D(0.0, 0.0, depth);
-	b = Vector3D(width, 0.0, 0.0);
-	normal = Normal(0.0, 1.0, 0.0);
-	std::shared_ptr<Rectangler> floor_ptr = std::make_shared<Rectangler>(p0, a, b, normal);
-	floor_ptr->SetMaterial(matte_ptr3);
-	AddObject(floor_ptr);
-
-	//ceiling
-	p0 = Point3D(0.0, height, 0.0);
-	a = Vector3D(0.0, 0.0, depth);
-	b = Vector3D(width, 0.0, 0.0);
-	normal = Normal(0.0, -1.0, 0.0);
-	std::shared_ptr<Rectangler> ceiling_ptr = std::make_shared<Rectangler>(p0, a, b, normal);
-	ceiling_ptr->SetMaterial(matte_ptr3);
-	AddObject(ceiling_ptr);
-
-	//short box
-	//top
-	p0 = Point3D(13.0, 16.5, 6.5);
-	a = Vector3D(-4.8, 0.0, 16.0);
-	b = Vector3D(16.0, 0.0, 4.9);
-	normal = Normal(0.0, 1.0, 0.0);
-	std::shared_ptr<Rectangler> short_top_ptr = std::make_shared<Rectangler>(p0, a, b, normal);
-	short_top_ptr->SetMaterial(matte_ptr3);
-	AddObject(short_top_ptr);
-
-	//side1
-	p0 = Point3D(13.0, 0.0, 6.5);
-	a = Vector3D(-4.8, 0.0, 16.0);
-	b = Vector3D(0.0, 16.5, 0.0);
-	std::shared_ptr<Rectangler> short_side_ptr1 = std::make_shared<Rectangler>(p0, a, b);
-	short_side_ptr1->SetMaterial(matte_ptr3);
-	AddObject(short_side_ptr1);
-
-	//side2
-	p0 = Point3D(8.2, 0.0, 22.5);
-	a = Vector3D(15.8, 0.0, 4.7);
-	std::shared_ptr<Rectangler> short_side_ptr2 = std::make_shared<Rectangler>(p0, a, b);
-	short_side_ptr2->SetMaterial(matte_ptr3);
-	AddObject(short_side_ptr2);
-
-	//side3
-	p0 = Point3D(24.2, 0.0, 27.4);
-	a = Vector3D(4.8, 0.0, -16.0);
-	std::shared_ptr<Rectangler> short_side_ptr3 = std::make_shared<Rectangler>(p0, a, b);
-	short_side_ptr3->SetMaterial(matte_ptr3);
-	AddObject(short_side_ptr3);
-
-	//side4
-	p0 = Point3D(29.0, 0.0, 11.4);
-	a = Vector3D(-16.0, 0.0, -4.9);
-	std::shared_ptr<Rectangler> short_side_ptr4 = std::make_shared<Rectangler>(p0, a, b);
-	short_side_ptr4->SetMaterial(matte_ptr3);
-	AddObject(short_side_ptr4);
-
-	//tall
-	//top
-	p0 = Point3D(42.3, 33.0, 24.7);
-	a = Vector3D(-15.8, 0.0, 4.9);
-	b = Vector3D(4.9, 0.0, 15.9);
-	normal = Normal(0.0, 1.0, 0.0);
-	std::shared_ptr<Rectangler> tall_top_ptr = std::make_shared<Rectangler>(p0, a, b, normal);
-	tall_top_ptr->SetMaterial(matte_ptr3);
-	AddObject(tall_top_ptr);
-
-	//side1
-	p0 = Point3D(42.3, 0.0, 24.7);
-	a = Vector3D(-15.8, 0.0, 4.9);
-	b = Vector3D(0.0, 33.0, 0.0);
-	std::shared_ptr<Rectangler> tall_side_ptr1 = std::make_shared<Rectangler>(p0, a, b);
-	tall_side_ptr1->SetMaterial(matte_ptr3);
-	AddObject(tall_side_ptr1);
-
-	//side2
-	p0 = Point3D(26.5, 0.0, 29.6);
-	a = Vector3D(4.9, 0.0, 15.9);
-	std::shared_ptr<Rectangler> tall_side_ptr2 = std::make_shared<Rectangler>(p0, a, b);
-	tall_side_ptr2->SetMaterial(matte_ptr3);
-	AddObject(tall_side_ptr2);
-
-	//side3
-	p0 = Point3D(31.4, 0.0, 45.5);
-	a = Vector3D(15.8, 0.0, -4.9);
-	std::shared_ptr<Rectangler> tall_side_ptr3 = std::make_shared<Rectangler>(p0, a, b);
-	tall_side_ptr3->SetMaterial(matte_ptr3);
-	AddObject(tall_side_ptr3);
-
-	//side4
-	p0 = Point3D(47.2, 0.0, 40.6);
-	a = Vector3D(-4.9, 0.0, -15.9);
-	std::shared_ptr<Rectangler> tall_side_ptr4 = std::make_shared<Rectangler>(p0, a, b);
-	tall_side_ptr4->SetMaterial(matte_ptr3);
-	AddObject(tall_side_ptr4);
+	std::shared_ptr<Matte> mattePtr3 = std::make_shared<Matte>();
+	mattePtr3->SetKa(0.15);
+	mattePtr3->SetKd(0.5);
+	mattePtr3->SetCd(0, 0.4, 0.2);
+	std::shared_ptr<Plane> planePtr = std::make_shared<Plane>(Point3D(0, 0, 0), Normal(0,1,0));
+	planePtr->SetMaterial(mattePtr3);
+	AddObject(planePtr);
+	
 }
 
 void World::AddObject(std::shared_ptr<GeometricObject> objectPtr)
