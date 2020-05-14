@@ -59,9 +59,8 @@ Matrix Matrix::operator/(const double d)
 		{
 			value /= d;
 		}
-
-		return *this;
 	}
+	return *this;
 }
 
 void Matrix::SetIdentity()
