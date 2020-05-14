@@ -5,7 +5,7 @@ I refference "Ray Tracing from the ground up" so my code is influenced by this b
 This ray Tracer generate beautiful image.  
 I collect many images. If you look at only result, you search in the  Image directory.
 # Directory
-I write many new techniques in Light Directory.  
+I write many new techniques in MyTracer Directory.  
 If you want to try something, you use this directory's code.
 # How to Display
 There are many methods to display,   
@@ -48,10 +48,14 @@ https://github.com/nmwsharp/happly
 
 ## BRDF
 * Lambertian Reflection
-* Glossy Specular (default is Lewis,1994 method. you can use Blinn,1977 method if you want to calculate other method.)
+* Glossy Specular 
+    * [Lewis 1994]
+    * [Blinn 1977] 
 * Perfect Specular
 * Fresnel Reflector
 * Texture Lambertian Reflection
+* microfaset Specular
+    * [Lagarde, Rousiers 2014]
 
 ## BTDF
 * PerfectTransmitter
@@ -68,6 +72,7 @@ https://github.com/nmwsharp/happly
 ## Material
 * Matte
 * Phong
+* Cook Torrance
 * Plastic
 * Emissive
 * Reflective
