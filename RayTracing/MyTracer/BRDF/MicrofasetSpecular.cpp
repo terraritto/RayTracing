@@ -60,9 +60,9 @@ RGBColor MicrofasetSpecular::Rho(const ShadeRec& sr, const Vector3D& wo) const
 }
 
 
-double MicrofasetSpecular::FTerm(const Vector3D& wo, const Vector3D& wh) const //schlick
+double MicrofasetSpecular::FTerm(const Vector3D& wi, const Vector3D& wh) const //schlick
 {
-	return mFrenel + (1 - mFrenel) * std::pow(1 - std::abs(wo * wh),5);
+	return mFrenel + (1 - mFrenel) * std::pow(1 - std::abs(wi * wh),5);
 }
 
 double MicrofasetSpecular::DTerm(const Vector3D& n, const Vector3D& h) const
@@ -93,7 +93,7 @@ double MicrofasetSpecular::Lambda(double cosTheta) const
 	*/
 }
 
-double MicrofasetSpecular::GTerm(const Vector3D& wi, const Vector3D& wo, const Vector3D& wh, const Vector3D& n) const
+double MicrofasetSpecular::GTerm(const Vector3D& wo, const Vector3D& wi, const Vector3D& wh, const Vector3D& n) const
 {
 	double numer = Heaviside(wo * wh) * Heaviside(wi * wh);
 	double denom = 1.0 + Lambda(wo * n) + Lambda(wi * n);
