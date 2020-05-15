@@ -56,6 +56,7 @@ https://github.com/nmwsharp/happly
 * Texture Lambertian Reflection
 * microfaset Specular
     * [Lagarde, Rousiers 2014]
+    * Beckmann
 
 ## BTDF
 * PerfectTransmitter
