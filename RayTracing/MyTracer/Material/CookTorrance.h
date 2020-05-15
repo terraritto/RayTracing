@@ -21,6 +21,7 @@ public:
 	void SetKd(float kd);
 	void SetKs(float ks);
 	void SetFresnel(float f);
+	void SetType(MicrofaseType type);
 	void SetAlpha(float alpha);
 	void SetCd(const RGBColor c);
 	void SetCd(const float r, const float g, const float b);

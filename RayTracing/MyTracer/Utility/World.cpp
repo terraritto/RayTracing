@@ -163,10 +163,13 @@ void World::Build()
 	mattePtr1->SetKa(0.25);
 	mattePtr1->SetKd(0.75);
 	mattePtr1->SetKs(0.25);
-	mattePtr1->SetAlpha(0.9);
+	mattePtr1->SetAlpha(0.4);
 	mattePtr1->SetFresnel(0.5);
 	mattePtr1->SetCd(1, 1, 0);
 	mattePtr1->SetCs(0.2);
+
+	mattePtr1->SetType(MicrofaseType::Beckmann);
+	//mattePtr1->SetType(MicrofaseType::GGX);
 
 	std::shared_ptr<Sphere> spherePtr1 = std::make_shared<Sphere>(Point3D(3.85, 2.3, -2.55), 2.3);
 	spherePtr1->SetMaterial(mattePtr1);
@@ -177,9 +180,13 @@ void World::Build()
 	mattePtr2->SetKd(0.75);
 	mattePtr2->SetKs(0.25);
 	mattePtr2->SetFresnel(0.5);
-	mattePtr2->SetAlpha(0.85);
+	mattePtr2->SetAlpha(0.2);
 	mattePtr2->SetCd(0.75, 0.25, 0);
 	mattePtr2->SetCs(0.2);
+
+	mattePtr2->SetType(MicrofaseType::Beckmann);
+	//mattePtr2->SetType(MicrofaseType::GGX);
+
 	std::shared_ptr<Sphere> spherePtr2 = std::make_shared<Sphere>(Point3D(-0.7, 1, 4.2), 2);
 	spherePtr2->SetMaterial(mattePtr2);
 	AddObject(spherePtr2);

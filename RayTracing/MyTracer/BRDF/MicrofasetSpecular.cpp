@@ -1,14 +1,13 @@
 #include "MicrofasetSpecular.h"
 #include "../Sampler/MultiJittered.h"
-#include "../Maths/Constants.h"
 
 MicrofasetSpecular::MicrofasetSpecular()
-	: BRDF(), mAlpha(0.0), mFrenel(0.0), mCs(0.0), mKs(0.0)
+	: BRDF(), mAlpha(0.0), mFrenel(0.0), mCs(0.0), mKs(0.0), mType(MicrofaseType::GGX)
 {
 }
 
 MicrofasetSpecular::MicrofasetSpecular(const MicrofasetSpecular& lamb)
-	: BRDF(lamb), mAlpha(lamb.mAlpha), mFrenel(lamb.mFrenel), mCs(lamb.mCs), mKs(0.0)
+	: BRDF(lamb), mAlpha(lamb.mAlpha), mFrenel(lamb.mFrenel), mCs(lamb.mCs), mKs(0.0), mType(lamb.mType)
 {
 }
 
@@ -24,6 +23,7 @@ MicrofasetSpecular& MicrofasetSpecular::operator=(const MicrofasetSpecular& rhs)
 	mAlpha = rhs.mAlpha;
 	mFrenel = rhs.mFrenel;
 	mCs = rhs.mCs;
+	mType = rhs.mType;
 
 	return *this;
 }
@@ -59,48 +59,6 @@ RGBColor MicrofasetSpecular::Rho(const ShadeRec& sr, const Vector3D& wo) const
 	return RGBColor();
 }
 
-
-double MicrofasetSpecular::FTerm(const Vector3D& wi, const Vector3D& wh) const //schlick
-{
-	return mFrenel + (1 - mFrenel) * std::pow(1 - std::abs(wi * wh),5);
-}
-
-double MicrofasetSpecular::DTerm(const Vector3D& n, const Vector3D& h) const
-{
-	double cosTheta = n * h;
-	if (cosTheta < 1.0e-9)
-	{
-		return 0.0;
-	}
-
-	double cosTheta2 = cosTheta * cosTheta;
-	double cosTheta4 = cosTheta2 * cosTheta2;
-	double alpha2 = mAlpha * mAlpha;
-	double chi = Heaviside(cosTheta);
-	double tanTheta2 = (1.0 - cosTheta2) / cosTheta2;
-
-	return chi / (PI * alpha2 * cosTheta4 * (std::pow(1.0 + tanTheta2 / alpha2,2)));
-}
-
-double MicrofasetSpecular::Lambda(double cosTheta) const
-{
-	double tanthetaO = std::sqrt(1.0 - cosTheta * cosTheta) / cosTheta;
-	double a = 1.0 / (mAlpha * tanthetaO);
-	return -1.0 + std::sqrt(1.0 + 1.0 / (a * a)) * 0.5;
-	/*
-	double cosTheta2 = cosTheta * cosTheta;
-	return (-1.0 + std::sqrt(1.0 + mAlpha * mAlpha * (1 - cosTheta2) / cosTheta2)) * 0.5;
-	*/
-}
-
-double MicrofasetSpecular::GTerm(const Vector3D& wo, const Vector3D& wi, const Vector3D& wh, const Vector3D& n) const
-{
-	double numer = Heaviside(wo * wh) * Heaviside(wi * wh);
-	double denom = 1.0 + Lambda(wo * n) + Lambda(wi * n);
-
-	return numer / denom;
-}
-
 void MicrofasetSpecular::SetKs(const float k)
 {
 	mKs = k;
@@ -114,6 +72,11 @@ void MicrofasetSpecular::SetAlpha(const float alpha)
 void MicrofasetSpecular::SetFresnel(const float fresnel)
 {
 	mFrenel = fresnel;
+}
+
+void MicrofasetSpecular::SetType(MicrofaseType type)
+{
+	mType = type;
 }
 
 void MicrofasetSpecular::SetCs(const RGBColor& c)

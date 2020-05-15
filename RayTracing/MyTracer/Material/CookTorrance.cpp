@@ -174,6 +174,11 @@ void CookTorrance::SetFresnel(float f)
 	mSpecularBRDF->SetFresnel(f);
 }
 
+void CookTorrance::SetType(MicrofaseType type)
+{
+	mSpecularBRDF->SetType(type);
+}
+
 void CookTorrance::SetAlpha(float alpha)
 {
 	mSpecularBRDF->SetAlpha(alpha);
