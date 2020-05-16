@@ -77,6 +77,7 @@ https://github.com/nmwsharp/happly
 * Plastic
 * Emissive
 * Reflective
+* MicrofasetReflective
 * GlossyReflector
 * Transparent
 * Dielectric
