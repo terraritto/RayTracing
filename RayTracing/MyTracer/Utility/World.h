@@ -9,6 +9,7 @@
 #include "../Light/Light.h"
 #include <memory>
 #include <vector>
+#include <random>
 
 class Camera;
 class Light;
@@ -26,6 +27,11 @@ public:
 	std::shared_ptr<Camera> mCameraPtr;
 	std::shared_ptr<Light> mAmbientPtr;
 	std::vector<std::shared_ptr<Light>> mLights;
+	
+	//uniform random
+	std::random_device seed;
+	std::default_random_engine engine;
+	std::uniform_real_distribution<> dist;
 
 	World();
 	~World();

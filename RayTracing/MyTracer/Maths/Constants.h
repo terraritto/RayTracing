@@ -38,6 +38,10 @@ int SolveQuadric(std::array<double, 3> c, std::array<double, 2>& s);
 int SolveCubic(std::array<double, 4> c, std::array<double, 3>& s);
 int SolveQuartic(std::array<double, 5> c, std::array<double, 4>& s);
 
+
+// for russian roulette
+constexpr int DEPTH_LIMIT = 32;
+
 //Heaviside step function
 template<class Type>
 inline auto Heaviside(Type x)
