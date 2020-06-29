@@ -32,7 +32,7 @@ void AlphaImage::ReadPpmFile(std::string fileName)
 			mPixel[x][y].mRed = r / 255.0;
 			mPixel[x][y].mGreen = g / 255.0;
 			mPixel[x][y].mBlue = b / 255.0;
-			mAlpha[x][y] = a / 255.0;
+			mAlpha[x][y] = a / 255.0f < 0.0f || a/255.0f > 1.0f ? 1.0f : a / 255.0f;
 		}
 	}
 
@@ -44,4 +44,9 @@ void AlphaImage::ReadPpmFile(std::string fileName)
 RGBColor AlphaImage::GetColor(int row, int column)
 {
 	return mPixel[row][column] * mAlpha[row][column];
+}
+
+float AlphaImage::GetAlpha(int row, int column)
+{
+	return mAlpha[row][column];
 }

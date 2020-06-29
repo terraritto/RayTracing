@@ -12,6 +12,7 @@ public:
 
 	void ReadPpmFile(std::string fileName);
 	RGBColor GetColor(int row, int column);
+	float GetAlpha(int row, int column);
 
 public:
 	int mHres;

@@ -10,4 +10,5 @@ public:
 	~Texture() = default;
 
 	virtual RGBColor GetColor(const ShadeRec& sr) const { return RGBColor(); }
+	virtual float GetAlpha(const ShadeRec& sr) const { return 1.0f; }
 };
