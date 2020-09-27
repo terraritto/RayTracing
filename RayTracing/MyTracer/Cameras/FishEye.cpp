@@ -66,7 +66,7 @@ Vector3D FishEye::GetDirection(const Point2D& p, const int hRes, const int vRes,
 	}
 }
 
-void FishEye::RenderScene(const World& w)
+void FishEye::RenderScene(World& w)
 {
 	RGBColor L;
 	ViewPlane vp(w.mViewPlane);

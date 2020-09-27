@@ -38,4 +38,6 @@ protected:
 	RGBColor mColor;
 	std::shared_ptr<Material> mMaterial;
 	bool mIsShadow;
+public:
+	std::shared_ptr<ShadeRec> mShadowSr; //for alpha shadow
 };

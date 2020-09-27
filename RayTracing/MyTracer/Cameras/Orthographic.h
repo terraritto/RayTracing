@@ -12,7 +12,7 @@ public:
 	Orthographic& operator=(const Orthographic& rhs);
 
 	void SetZWindow(const double zw);
-	void RenderScene(const World& w) override;
+	void RenderScene(World& w) override;
 private:
 	float mZw;
 };

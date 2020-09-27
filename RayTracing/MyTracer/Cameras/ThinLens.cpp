@@ -60,7 +60,7 @@ Vector3D ThinLens::GetDirection(const Point2D& pixelPoint, Point2D& lensPoint) c
 	return dir;
 }
 
-void ThinLens::RenderScene(const World& w)
+void ThinLens::RenderScene(World& w)
 {
 	RGBColor L;
 	ViewPlane vp(w.mViewPlane);

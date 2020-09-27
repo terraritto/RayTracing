@@ -1,13 +1,14 @@
-#include "Matte.h"
+#include "MMD_Matte.h"
 
-Matte::Matte()
+MMD_Matte::MMD_Matte()
 	: Material()
 {
 	mAmbientBRDF = std::make_shared<Lambertian>();
 	mDiffuseBRDF = std::make_shared<Lambertian>();
+	mSVDiffuseBRDF = std::make_shared<SV_Lambertian>();
 }
 
-Matte::Matte(const Matte& m)
+MMD_Matte::MMD_Matte(const MMD_Matte& m)
 	:Material(m)
 {
 	if (m.mAmbientBRDF)
@@ -27,9 +28,18 @@ Matte::Matte(const Matte& m)
 	{
 		mDiffuseBRDF = nullptr;
 	}
+
+	if (m.mSVDiffuseBRDF)
+	{
+		mSVDiffuseBRDF = m.mSVDiffuseBRDF->Clone();
+	}
+	else
+	{
+		mSVDiffuseBRDF.reset();
+	}
 }
 
-Matte::~Matte()
+MMD_Matte::~MMD_Matte()
 {
 	if (mAmbientBRDF)
 	{
@@ -42,7 +52,7 @@ Matte::~Matte()
 	}
 }
 
-Matte& Matte::operator=(const Matte& rhs)
+MMD_Matte& MMD_Matte::operator=(const MMD_Matte& rhs)
 {
 	if (this == &rhs)
 	{
@@ -73,63 +83,86 @@ Matte& Matte::operator=(const Matte& rhs)
 		mDiffuseBRDF = rhs.mDiffuseBRDF->Clone();
 	}
 
+	if (mSVDiffuseBRDF)
+	{
+		mSVDiffuseBRDF.reset();
+	}
+
+	if (rhs.mSVDiffuseBRDF)
+	{
+		mSVDiffuseBRDF = rhs.mSVDiffuseBRDF->Clone();
+	}
+
 	return *this;
 }
 
-std::shared_ptr<Matte> Matte::Clone() const
+std::shared_ptr<MMD_Matte> MMD_Matte::Clone() const
 {
-	return std::make_shared<Matte>(*this);
+	return std::make_shared<MMD_Matte>(*this);
 }
 
-void Matte::SetKa(const float k)
+void MMD_Matte::SetKa(const float k)
 {
 	mAmbientBRDF->SetKa(k);
 }
 
-void Matte::SetKd(const float k)
+void MMD_Matte::SetKd(const float k)
 {
-	mDiffuseBRDF->SetKd(k);
+	mDiffuseBRDF->SetKd(k); //supecific diffuse is constant
+	mSVDiffuseBRDF->SetKd(k);
 }
 
-void Matte::SetCd(const RGBColor c)
+void MMD_Matte::SetCd(const RGBColor c)
 {
 	mAmbientBRDF->SetCd(c);
 	mDiffuseBRDF->SetCd(c);
 }
 
-void Matte::SetCd(const float r, const float g, const float b)
+void MMD_Matte::SetCd(const float r, const float g, const float b)
 {
 	mAmbientBRDF->SetCd(r, g, b);
 	mDiffuseBRDF->SetCd(r, g, b);
 }
 
-void Matte::SetCd(const float c)
+void MMD_Matte::SetCd(const float c)
 {
 	mAmbientBRDF->SetCd(c);
 	mDiffuseBRDF->SetCd(c);
 }
 
-void Matte::SetCda(const RGBColor c)
+void MMD_Matte::SetCda(const RGBColor c)
 {
 	mAmbientBRDF->SetCd(c);
 }
 
-void Matte::setCdd(const RGBColor c)
+void MMD_Matte::setCdd(const RGBColor c)
 {
 	mDiffuseBRDF->SetCd(c);
 }
 
-void Matte::SetSampler(std::shared_ptr<Sampler> sp)
+void MMD_Matte::setCddc(const std::shared_ptr<Texture> cd)
+{
+	mSVDiffuseBRDF->SetCd(cd);
+}
+
+void MMD_Matte::SetToon(const std::shared_ptr<Texture> toon)
+{
+	mSVDiffuseBRDF->SetToon(toon);
+}
+
+void MMD_Matte::SetSampler(std::shared_ptr<Sampler> sp)
 {
 	mDiffuseBRDF->SetSampler(sp);
+	mSVDiffuseBRDF->SetSampler(sp);
 }
 
-void Matte::SetSamples(const int numSamples)
+void MMD_Matte::SetSamples(const int numSamples)
 {
 	mDiffuseBRDF->SetSamples(numSamples);
+	mSVDiffuseBRDF->SetSamples(numSamples);
 }
 
-RGBColor Matte::Shade(ShadeRec& sr)
+RGBColor MMD_Matte::Shade(ShadeRec& sr)
 {
 	Vector3D wo = -sr.mRay.mDirection;
 	RGBColor L = mAmbientBRDF->Rho(sr, wo) * sr.mWorld.mAmbientPtr->L(sr);
@@ -151,7 +184,7 @@ RGBColor Matte::Shade(ShadeRec& sr)
 			}
 			if (!inShadow)
 			{
-				L += mDiffuseBRDF->Func(sr, wo, wi) * sr.mWorld.mLights[j]->L(sr) * nDotWi;
+				L += mDiffuseBRDF->Func(sr, wo, wi) * mSVDiffuseBRDF->Func(sr,wo,wi) * sr.mWorld.mLights[j]->L(sr) * nDotWi;
 			}
 		}
 	}
@@ -159,22 +192,22 @@ RGBColor Matte::Shade(ShadeRec& sr)
 	return L;
 }
 
-RGBColor Matte::PathShade(ShadeRec& sr)
+RGBColor MMD_Matte::PathShade(ShadeRec& sr)
 {
 	Vector3D wi;
 	Vector3D wo = -sr.mRay.mDirection;
 	float pdf;
-	RGBColor f = mDiffuseBRDF->SampleFunc(sr, wo, wi, pdf);
+	RGBColor f = mDiffuseBRDF->SampleFunc(sr, wo, wi, pdf) * mSVDiffuseBRDF->SampleFunc(sr,wo,wi,pdf);
 	float nDotWi = sr.mNormal * wi;
 	Ray reflected_ray(sr.mHitPoint, wi);
 
 	return (f * sr.mWorld.mTracerPtr->TraceRay(reflected_ray, sr.mDepth + 1) * nDotWi / pdf);
 }
 
-RGBColor Matte::GlobalShade(ShadeRec& sr)
+RGBColor MMD_Matte::GlobalShade(ShadeRec& sr)
 {
 	RGBColor L;
-	
+
 	if (sr.mDepth == 0)
 	{
 		L = AreaLightShade(sr);
@@ -183,7 +216,7 @@ RGBColor Matte::GlobalShade(ShadeRec& sr)
 	Vector3D wi;
 	Vector3D wo = -sr.mRay.mDirection;
 	float pdf;
-	RGBColor f = mDiffuseBRDF->SampleFunc(sr, wo, wi, pdf);
+	RGBColor f = mDiffuseBRDF->SampleFunc(sr, wo, wi, pdf) * mSVDiffuseBRDF->SampleFunc(sr,wo,wi,pdf);
 	float nDotWi = sr.mNormal * wi;
 	Ray reflected_ray(sr.mHitPoint, wi);
 
@@ -192,10 +225,16 @@ RGBColor Matte::GlobalShade(ShadeRec& sr)
 	return L;
 }
 
-RGBColor Matte::AreaLightShade(ShadeRec& sr)
+RGBColor MMD_Matte::AreaLightShade(ShadeRec& sr)
 {
+	RGBColor L(0);
+	if (GetAlpha(sr) <= 0.1f)
+	{
+		Ray r(sr.mHitPoint, sr.mRay.mDirection);
+		return sr.mWorld.mTracerPtr->TraceRay(r,0);
+	}
+
 	Vector3D wo = -sr.mRay.mDirection;
-	RGBColor L = mAmbientBRDF->Rho(sr, wo) * sr.mWorld.mAmbientPtr->L(sr);
 	int numLights = sr.mWorld.mLights.size();
 
 	for (int j = 0; j < numLights; j++)
@@ -208,17 +247,24 @@ RGBColor Matte::AreaLightShade(ShadeRec& sr)
 			if (sr.mWorld.mLights[j]->GetIsShadow())
 			{
 				Ray shadowRay(sr.mHitPoint, wi);
-				inShadow = sr.mWorld.mLights[j]->InShadow(shadowRay, sr);
+				inShadow = sr.mWorld.mLights[j]->InShadowAlpha(shadowRay, sr);
 			}
 
 			if (!inShadow)
 			{
-				L += mDiffuseBRDF->Func(sr, wo, wi) * sr.mWorld.mLights[j]->L(sr)
-					* sr.mWorld.mLights[j]->G(sr) * nDotWi /
-					sr.mWorld.mLights[j]->pdf(sr);
+				L += mDiffuseBRDF->Func(sr, wo, wi) * mSVDiffuseBRDF->Func(sr, wo, wi) * sr.mWorld.mLights[j]->L(sr)
+					* sr.mWorld.mLights[j]->G(sr) * mSVDiffuseBRDF->GetToonColor(nDotWi) //toon shaing
+					/ sr.mWorld.mLights[j]->pdf(sr);
 			}
 		}
 	}
 
+	 L +=  L * mAmbientBRDF->Rho(sr, wo) * sr.mWorld.mAmbientPtr->L(sr);
+
 	return L;
+}
+
+float MMD_Matte::GetAlpha(ShadeRec& sr)
+{
+	return mSVDiffuseBRDF->GetAlpha(sr);
 }

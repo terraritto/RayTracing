@@ -14,7 +14,7 @@ public:
 
 	Vector3D GetDirection(const Point2D& pp, const int hRes,
 		const int vRes, const float s) const;
-	void RenderScene(const World& w) override;
+	void RenderScene(World& w) override;
 
 	void SetPsiMax(float psi) { mPsiMax = psi; }
 	void SetLambdaMax(float lambda) { mLambdaMax = lambda; }

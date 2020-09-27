@@ -24,7 +24,9 @@ public:
 
 	void ComputeNormal(const bool reverse_normal);
 	float InterpolateU(const float beta, const float gamma);
+	float InterpolateU(const float beta, const float gamma) const;
 	float InterpolateV(const float beta, const float gamma);
+	float InterpolateV(const float beta, const float gamma) const;
 
 	Normal GetNormal() override;
 	virtual BBox GetBoundingBox() const override;

@@ -45,7 +45,7 @@ void Orthographic::SetZWindow(const double zw)
 	mZw = zw;
 }
 
-void Orthographic::RenderScene(const World& w)
+void Orthographic::RenderScene(World& w)
 {
 	RGBColor pixelColor;
 	ViewPlane vp(w.mViewPlane);

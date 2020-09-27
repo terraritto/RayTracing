@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <mutex>
 #include "..//Utility//World.h"
 #include "..//Maths//Point3D.h"
 #include "..//Maths//Vector3D.h"
@@ -13,8 +14,8 @@ public:
 
 	virtual std::shared_ptr<Camera> Clone() const { return std::move(std::make_shared<Camera>(*this)); };
 
-	virtual void RenderScene(const World& w) {};
-	virtual void RenderStereo(const World& w, float x, int offset) {};
+	virtual void RenderScene(World& w) {};
+	virtual void RenderStereo(World& w, float x, int offset) {};
 	void ComputeUVW();
 
 	void SetEye(const Point3D& p);
@@ -25,6 +26,9 @@ public:
 	void SetUpVector(const float x, const float y, const float z);
 	void SetRoll(const float ra);
 	void SetExposureTime(const float exposure);
+
+	//for multithread
+	std::mutex mtx;
 protected:
 	Point3D mEye;
 	Point3D mLookAt;

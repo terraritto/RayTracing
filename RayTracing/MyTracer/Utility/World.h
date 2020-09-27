@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 #include <random>
+#include <mutex>
 
 class Camera;
 class Light;
@@ -27,6 +28,8 @@ public:
 	std::shared_ptr<Camera> mCameraPtr;
 	std::shared_ptr<Light> mAmbientPtr;
 	std::vector<std::shared_ptr<Light>> mLights;
+
+	std::vector<std::vector<RGBColor>> mResult;
 	
 	//uniform random
 	std::random_device seed;
@@ -42,7 +45,7 @@ public:
 	ShadeRec HitBareBonesObjects(const Ray& ray);
 	ShadeRec HitObjects(const Ray& ray);
 	void OpenWindow(const int hres, const int vres) const;
-	void DisplayPixel(const int row, const int column, const RGBColor& pixelColor) const;
+	void DisplayPixel(const int row, const int column, const RGBColor& pixelColor);
 
 	//for displaypixel
 	RGBColor MaxToOne(const RGBColor& c) const;

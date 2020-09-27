@@ -93,6 +93,28 @@ bool AreaLight::InShadow(const Ray& ray, const ShadeRec& sr) const
 	return false;
 }
 
+bool AreaLight::InShadowAlpha(const Ray& ray, ShadeRec& sr)
+{
+	float t = std::numeric_limits<float>::max();
+	int numObjects = sr.mWorld.mObjects.size();
+	float ts = (mSamplePoint - ray.mOrigin) * ray.mDirection;
+
+	for (int j = 0; j < numObjects; j++)
+	{
+		if (!sr.mWorld.mObjects[j]->GetIsShadow())
+		{
+			continue;
+		}
+
+		if (sr.mWorld.mObjects[j]->Shadow_hit(ray, t) && t < ts)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 RGBColor AreaLight::L(ShadeRec& sr)
 {
 	float nDotd = - mLightNormal * mWi;

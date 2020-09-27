@@ -15,7 +15,7 @@ public:
 	ThinLens& operator=(const ThinLens& rhs);
 
 	Vector3D GetDirection(const Point2D& pixelPoint, Point2D& lensPoint) const;
-	void RenderScene(const World& w) override;
+	void RenderScene(World& w) override;
 
 	void SetSampler(std::shared_ptr<Sampler> sp);
 	void SetViewDistance(float distance);

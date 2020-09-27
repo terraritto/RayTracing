@@ -20,6 +20,9 @@ public:
 	virtual RGBColor SampleFunc(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi) const;
 	virtual RGBColor SampleFunc(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi, float& pdf) const;
 	virtual RGBColor Rho(const ShadeRec& sr, const Vector3D& wo) const;
+
+	//for alpha
+	virtual float GetAlpha(const ShadeRec& sr) { return 1.0f; }
 protected:
 	std::shared_ptr<Sampler> mSamplerPtr;
 };

@@ -49,3 +49,15 @@ float AlphaImageTexture::GetAlpha(const ShadeRec& sr) const
 
 	return mImage->GetAlpha(row, mImage->mVres - column - 1);
 }
+
+//for toon
+RGBColor AlphaImageTexture::GetToon(const float f) const
+{
+	int row, column;
+
+	row = 0;
+	column = static_cast<int>((mImage->mVres - 1) * f);
+
+	return mImage->GetColor(row, mImage->mVres - column - 1);
+
+}

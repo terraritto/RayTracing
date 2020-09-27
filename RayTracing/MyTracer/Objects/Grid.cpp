@@ -2,13 +2,28 @@
 #include "Triangle.h"
 #include "SmoothTriangle.h"
 
+//triangle
 #include "FlatMeshTriangle.h"
 #include "FlatUVMeshTriangle.h"
 #include "SmoothMeshTriangle.h"
 #include "SmoothUVMeshTriangle.h"
+
+//ply
 #include "../../Additional_Code/ReadPLY.h"
 
+//texture
+#include "../Texture/ImageTexture.h"
+#include "../Texture//AlphaImageTexture.h"
+
+//material
+#include "../Material/Matte.h"
+#include "../Material/SV_Matte.h"
+#include "../Material/MMD_Matte.h"
+#include "../Material/MMD_Dielectric.h"
+
 #include "DxLib.h"
+
+#include <unordered_map>
 
 Grid::Grid()
 	: Compound()
@@ -364,6 +379,10 @@ void Grid::SetupCells()
 
 bool Grid::hit(const Ray& ray, double& t, ShadeRec& s)
 {
+	//for alpha shadow about mesh
+	mShadowSr = std::make_shared<ShadeRec>(s);
+
+
 	double ox = ray.mOrigin.mPosX;
 	double oy = ray.mOrigin.mPosY;
 	double oz = ray.mOrigin.mPosZ;
@@ -554,7 +573,8 @@ bool Grid::hit(const Ray& ray, double& t, ShadeRec& s)
 
 		if (tx_next < ty_next && tx_next < tz_next)
 		{
-			if (object_ptr && object_ptr->hit(ray, t, s) && t < tx_next)
+			if (object_ptr && object_ptr->hit(ray, t, s) 
+				&& t < tx_next)
 			{
 				mMaterial = object_ptr->GetMaterial();
 				return true;
@@ -571,7 +591,8 @@ bool Grid::hit(const Ray& ray, double& t, ShadeRec& s)
 		{
 			if (ty_next < tz_next)
 			{
-				if (object_ptr && object_ptr->hit(ray, t, s) && t < ty_next)
+				if (object_ptr && object_ptr->hit(ray, t, s) 
+					&& t < ty_next)
 				{
 					mMaterial = object_ptr->GetMaterial();
 					return true;
@@ -587,7 +608,8 @@ bool Grid::hit(const Ray& ray, double& t, ShadeRec& s)
 			}
 			else
 			{
-				if (object_ptr && object_ptr->hit(ray, t, s) && t < tz_next)
+				if (object_ptr && object_ptr->hit(ray, t, s)
+					&& t < tz_next)
 				{
 					mMaterial = object_ptr->GetMaterial();
 					return true;
@@ -1066,6 +1088,199 @@ void Grid::ReadUVPlyFile(std::string fileName, ETriangleType type)
 	//---------------------
 }
 
+void Grid::ReadMMDTriangles(int modelHandle)
+{
+	//setup mesh data and get it.
+	MV1SetupReferenceMesh(modelHandle, -1, TRUE);
+	auto refPoly = MV1GetReferenceMesh(modelHandle, -1, TRUE);
+
+	//set up image
+	std::string pass = "Additional_File/MMD/TdaéÆèââπÉ~ÉNV4X_Ver1.00/";
+	std::unordered_map<std::string, std::shared_ptr<AlphaImageTexture>> image_map;
+
+	//not shadow
+	std::vector<std::string> not_testure = 
+	{ 
+		"hairshadow",
+		"body_cloth_yellowgreen",
+		"cheek",
+		"megane",
+		"lens"
+	};
+
+	//transparent shadow
+	std::vector<std::string> transparent = { "body_decal","eye_hi","eye_hi2" };
+
+	int textureNum = MV1GetTextureNum(modelHandle);
+	for (int i = 0; i < textureNum; i++)
+	{
+		//name
+		std::string name = MV1GetTextureName(modelHandle, i);
+		
+		//image
+		std::shared_ptr<AlphaImage> image = std::make_shared<AlphaImage>();
+		image->ReadPpmFile(pass + name);
+
+		//texture
+		std::shared_ptr<AlphaImageTexture> texture_ptr = std::make_shared<AlphaImageTexture>();
+		texture_ptr->SetImage(image);
+
+
+		image_map[name] = texture_ptr;
+	}
+
+	//set num
+	mMesh->mNumVertices = refPoly.VertexNum;
+	mMesh->mNumTriangles = refPoly.PolygonNum;
+
+	//---set---
+	// objects
+	mObjects.reserve(mMesh->mNumTriangles);
+
+	//vertex
+	mMesh->mVertices.reserve(mMesh->mNumVertices);
+	for (int i = 0; i < mMesh->mNumVertices; i++)
+	{
+		Point3D p(-refPoly.Vertexs[i].Position.x, //right coordinate -> left coordinate
+			refPoly.Vertexs[i].Position.y,
+			refPoly.Vertexs[i].Position.z);
+		//vertices
+		mMesh->mVertices.push_back(p);
+		//uv
+		mMesh->mU.push_back(refPoly.Vertexs[i].TexCoord[0].u);
+		mMesh->mV.push_back(1.0f -refPoly.Vertexs[i].TexCoord[0].v);
+	}
+
+	//normal
+	mMesh->mNormals.reserve(mMesh->mNumVertices);
+	for (int i = 0; i < mMesh->mNumVertices; i++)
+	{
+		Normal p(-refPoly.Vertexs[i].Normal.x,
+			refPoly.Vertexs[i].Normal.y,
+			refPoly.Vertexs[i].Normal.z);
+		//normal
+		mMesh->mNormals.push_back(p);
+	}
+
+	//mesh
+	for (int i = 0; i < mMesh->mNumTriangles; i++)
+	{
+		bool is_skip = false;
+		//material name
+		std::string material_name = MV1GetMaterialName(modelHandle, refPoly.Polygons[i].MaterialIndex);
+
+		// skip shadow textuer
+		for (auto& name : not_testure)
+		{
+			if (material_name == name)
+			{
+				is_skip = true;
+			}
+		}
+
+		if (is_skip) { continue; }
+
+		//polygon
+		std::shared_ptr<SmoothUVMeshTriangle> triangle_ptr = 
+			std::make_shared<SmoothUVMeshTriangle>(
+				mMesh, 
+				refPoly.Polygons[i].VIndex[0], 
+				refPoly.Polygons[i].VIndex[1], 
+				refPoly.Polygons[i].VIndex[2]);
+		triangle_ptr->ComputeNormal(mReverseNormal);
+		
+		//material
+		/*
+		std::shared_ptr<Matte> sv_matte_ptr = std::make_shared<Matte>();
+		sv_matte_ptr->SetKa(0.8);
+		sv_matte_ptr->SetKd(0.2);
+
+		auto ambient = MV1GetMaterialAmbColor(modelHandle, refPoly.Polygons[i].MaterialIndex);
+		RGBColor am = RGBColor(ambient.r, ambient.g, ambient.b);
+		auto diffuse = MV1GetMaterialDifColor(modelHandle, refPoly.Polygons[i].MaterialIndex);
+		RGBColor diff = RGBColor(diffuse.r, diffuse.g, diffuse.b);
+		
+		sv_matte_ptr->setCdd(diff);
+		sv_matte_ptr->SetCda(am);
+		triangle_ptr->SetMaterial(sv_matte_ptr);
+		*/
+		/*
+		std::shared_ptr<SV_Matte> sv_matte_ptr = std::make_shared<SV_Matte>();
+		sv_matte_ptr->SetKa(0.2);
+		sv_matte_ptr->SetKd(0.8);
+
+		std::string material_texture_name = MV1GetTextureName(modelHandle,MV1GetMaterialDifMapTexture(modelHandle, refPoly.Polygons[i].MaterialIndex));
+		sv_matte_ptr->SetCd(image_map.at(material_texture_name));
+		*/
+
+		//dieletric
+		/*
+		if (std::find(std::begin(transparent), std::end(transparent), material_name) != std::end(transparent))
+		{
+			std::shared_ptr<MMD_Dielectric> dielectric_ptr = std::make_shared<MMD_Dielectric>();
+			
+			//matte settings
+			dielectric_ptr->SetKa(0.5);
+			dielectric_ptr->SetKd(0.5);
+			auto ambient = MV1GetMaterialAmbColor(modelHandle, refPoly.Polygons[i].MaterialIndex);
+			RGBColor am = RGBColor(ambient.r, ambient.g, ambient.b);
+			auto diffuse = MV1GetMaterialDifColor(modelHandle, refPoly.Polygons[i].MaterialIndex);
+			RGBColor diff = RGBColor(diffuse.r, diffuse.g, diffuse.b);
+			//texture name
+			std::string material_texture_name = MV1GetTextureName(modelHandle, MV1GetMaterialDifMapTexture(modelHandle, refPoly.Polygons[i].MaterialIndex));
+
+			dielectric_ptr->setCdd(diff);
+			dielectric_ptr->SetCda(am);
+			dielectric_ptr->setCddc(image_map.at(material_texture_name));
+
+			//dielectric settings
+			dielectric_ptr->SetEtaIn(1.5);
+			dielectric_ptr->SetEtaOut(1.0);
+			dielectric_ptr->SetCfIn(white);
+			dielectric_ptr->SetCfOut(white);
+
+			//push triangle
+			triangle_ptr->SetMaterial(dielectric_ptr);
+			mObjects.push_back(triangle_ptr);
+			continue;
+		}
+		*/
+
+		//matte
+		std::shared_ptr<MMD_Matte> sv_matte_ptr = std::make_shared<MMD_Matte>();
+		sv_matte_ptr->SetKa(0.0);
+		sv_matte_ptr->SetKd(0.7);
+
+		auto ambient = MV1GetMaterialAmbColor(modelHandle, refPoly.Polygons[i].MaterialIndex);
+		RGBColor am = RGBColor(ambient.r, ambient.g, ambient.b);
+		auto diffuse = MV1GetMaterialDifColor(modelHandle, refPoly.Polygons[i].MaterialIndex);
+		RGBColor diff = RGBColor(diffuse.r, diffuse.g, diffuse.b);
+		//texture name
+		std::string material_texture_name = MV1GetTextureName(modelHandle, MV1GetMaterialDifMapTexture(modelHandle, refPoly.Polygons[i].MaterialIndex));
+		//toon texture name
+		int is_toon_texture = MV1GetMaterialDifGradTexture(modelHandle, refPoly.Polygons[i].MaterialIndex);
+		std::string toon_texture_name;
+		//if is_toon_texture == -1, this material don't have toon texture.
+		if (is_toon_texture != -1) {
+			toon_texture_name = MV1GetTextureName(modelHandle, is_toon_texture);
+		}
+
+		sv_matte_ptr->setCdd(diff);
+		sv_matte_ptr->SetCda(am);
+		sv_matte_ptr->setCddc(image_map.at(material_texture_name));
+		if (is_toon_texture != -1) {
+			sv_matte_ptr->SetToon(image_map.at(toon_texture_name));
+		}
+
+		triangle_ptr->SetMaterial(sv_matte_ptr);
+		triangle_ptr->mShadowSr = mShadowSr; //set alpha shadow for mesh object
+
+		mObjects.push_back(triangle_ptr);
+	}
+	//---------------------
+
+}
+
 void Grid::ComputeMeshNormals()
 {
 	mMesh->mNormals.reserve(mMesh->mNumVertices);
@@ -1098,4 +1313,9 @@ void Grid::ComputeMeshNormals()
 	}
 
 	mMesh->mVertexFaces.erase(mMesh->mVertexFaces.begin(), mMesh->mVertexFaces.end());
+}
+
+void Grid::SetShadowAlpha(World& w)
+{
+	mShadowSr = std::make_shared<ShadeRec>(w);
 }

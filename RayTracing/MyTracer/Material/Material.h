@@ -17,6 +17,7 @@ public:
 	virtual RGBColor PathShade(ShadeRec& sr);
 	virtual RGBColor GlobalShade(ShadeRec& sr);
 	virtual RGBColor GetLe(ShadeRec& sr) const;
+	virtual float GetAlpha(ShadeRec& sr) { return 1.0f; }
 protected:
 	Material& operator=(const Material& rhs);
 };

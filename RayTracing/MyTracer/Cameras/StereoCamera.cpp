@@ -65,7 +65,7 @@ void StereoCamera::SetupCameras()
 	mRightCameraPtr->ComputeUVW();
 }
 
-void StereoCamera::RenderScene(const World& w)
+void StereoCamera::RenderScene(World& w)
 {
 	ViewPlane vp = w.mViewPlane;
 	int hRes = vp.mHRes;

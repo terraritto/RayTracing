@@ -14,6 +14,7 @@ public:
 
 	Vector3D GetDirection(ShadeRec& sr) override;
 	bool InShadow(const Ray& ray, const ShadeRec& sr) const override;
+	bool InShadowAlpha(const Ray& ray, ShadeRec& sr) override;
 	RGBColor L(ShadeRec& sr) override;
 	float G(const ShadeRec& sr) const override;
 	float pdf(const ShadeRec& sr) const override;

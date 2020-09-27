@@ -75,6 +75,24 @@ RGBColor SV_Lambertian::Rho(const ShadeRec& sr, const Vector3D& wo) const
 	return mKd * mCd->GetColor(sr);
 }
 
+float SV_Lambertian::GetAlpha(const ShadeRec& sr)
+{
+	return mCd->GetAlpha(sr);
+}
+
+//Material may have no toon texture,
+//so process add when mToon is nullptr.
+RGBColor SV_Lambertian::GetToonColor(float sample)
+{
+	if (mToon) {
+		return mToon->GetToon(sample);
+	}
+	else
+	{
+		return RGBColor(sample);
+	}
+}
+
 void SV_Lambertian::SetKa(const float ka)
 {
 	mKd = ka;
@@ -88,6 +106,11 @@ void SV_Lambertian::SetKd(const float kd)
 void SV_Lambertian::SetCd(std::shared_ptr<Texture> cd)
 {
 	mCd = cd;
+}
+
+void SV_Lambertian::SetToon(std::shared_ptr<Texture> toon)
+{
+	mToon = toon;
 }
 
 void SV_Lambertian::SetSampler(std::shared_ptr<Sampler> sp)

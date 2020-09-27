@@ -111,32 +111,103 @@ World::~World()
 	mTracerPtr.reset();
 }
 
+/*
 void World::Build()
 {
-	int numSamples = 100;
+	int numSamples = 16;
 
 	//set View Plane
-	mViewPlane.SetHRes(300);
-	mViewPlane.SetVRes(300);
+	mViewPlane.SetHRes(400);
+	mViewPlane.SetVRes(400);
+	mViewPlane.SetPixelSize(1.0);
+	mViewPlane.SetIsShowOutOfGamut(false);
+	mViewPlane.SetSampler(std::move(std::make_shared<MultiJittered>(numSamples)));
+	mViewPlane.SetMaxDepth(0);
+
+	//set Tracer
+	mTracerPtr = std::make_shared<RayCast>(this);
+	mBackGroundColor = RGBColor(0.5);
+
+	//Main Light
+	std::shared_ptr<Ambient> ambientPtr = std::make_shared<Ambient>();
+	ambientPtr->SetScaleRadiance(1.0);
+	SetAmbientLight(ambientPtr);
+
+	//Set Camera
+	std::shared_ptr<Pinhole> pinhole_ptr = std::make_shared<Pinhole>();
+	pinhole_ptr->SetEye(2, 3.5, 5);
+	pinhole_ptr->SetLookAt(0);
+	pinhole_ptr->SetViewDistance(800.0);
+	pinhole_ptr->ComputeUVW();
+	SetCamera(pinhole_ptr);
+
+	//sub light
+	std::shared_ptr<Directional> light_ptr1 = std::make_shared<Directional>();
+	light_ptr1->SetDirection(14, 20, 25);
+	light_ptr1->SetScaleRadiance(1.75);
+	light_ptr1->SetIsShadow(true);
+	AddLight(light_ptr1);
+
+	//image
+	std::shared_ptr<Image> image_ptr = std::make_shared<Image>();
+	image_ptr->ReadPpmFile("Additional_Texture/TextureFiles/jpg/nwaka2.jpg");
+
+	//mapping
+	std::shared_ptr<CylindricalMap> map_ptr = std::make_shared<CylindricalMap>();
+
+	// image texture
+	std::shared_ptr<ImageTexture> texture_ptr = std::make_shared<ImageTexture>();
+	texture_ptr->SetImage(image_ptr);
+	texture_ptr->SetMapping(map_ptr);
+
+	//set object
+	std::shared_ptr<SV_Matte> sv_matte_ptr = std::make_shared<SV_Matte>();
+	sv_matte_ptr->SetKa(0.40);
+	sv_matte_ptr->SetKd(0.95);
+	sv_matte_ptr->SetCd(texture_ptr);
+
+	std::shared_ptr<OpenCylinder> cylinder_ptr = std::make_shared<OpenCylinder>();
+	cylinder_ptr->SetMaterial(sv_matte_ptr);
+
+	std::shared_ptr<Instance> lightlace_ptr = std::make_shared<Instance>(cylinder_ptr);
+	lightlace_ptr->Scale(1.0, 1.0, 1.5);
+	lightlace_ptr->RotateY(75);
+	AddObject(lightlace_ptr);
+}
+*/
+
+void World::Build()
+{
+	int numSamples = 5;
+
+	//set View Plane
+	mViewPlane.SetHRes(1920);
+	mViewPlane.SetVRes(1080);
 	mViewPlane.SetPixelSize(1.0);
 	mViewPlane.SetIsShowOutOfGamut(false);
 	mViewPlane.SetSampler(std::move(std::make_shared<MultiJittered>(numSamples)));
 	mViewPlane.SetMaxDepth(10);
 
+	mResult.resize(mViewPlane.mHRes);
+	for (auto& res : mResult)
+	{
+		res.resize(mViewPlane.mVRes);
+	}
+
+
 	//set Tracer
-	//mTracerPtr = std::make_shared<PathTrace>(this);
-	mTracerPtr = std::make_shared<GlobalTrace>(this);
+	mTracerPtr = std::make_shared<AreaLights>(this);
 
 	//Main Light
 	std::shared_ptr<Ambient> ambientPtr = std::make_shared<Ambient>();
-	ambientPtr->SetScaleRadiance(0.0);
+	ambientPtr->SetScaleRadiance(1.0);
 	SetAmbientLight(ambientPtr);
 
 	//Set Camera
 	std::shared_ptr<Pinhole> pinholePtr = std::make_shared<Pinhole>();
-	pinholePtr->SetEye(27.6, 27.4, -80.0);
-	pinholePtr->SetLookAt(27.6, 27.4, 0.0);
-	pinholePtr->SetViewDistance(400);
+	pinholePtr->SetEye(77.6, 40.4, -80.0);
+	pinholePtr->SetLookAt(77.6, 40.4, 0.0);
+	pinholePtr->SetViewDistance(1000);
 	pinholePtr->ComputeUVW();
 	SetCamera(pinholePtr);
 
@@ -146,19 +217,26 @@ void World::Build()
 	Normal normal;
 
 	// box dimension
-	double width = 55.28;
-	double height = 54.88;
+	double width = 155.28;
+	double height = 80.88;
 	double depth = 55.92;
 
 	// ceiling light
 	std::shared_ptr<Emissive> emissive_ptr = std::make_shared<Emissive>();
+	//emissive_ptr->SetCe(1.0, 1.0, 1.0);
 	emissive_ptr->SetCe(1.0, 0.73, 0.4);
-	emissive_ptr->SetLadiance(100);
+	emissive_ptr->SetLadiance(10);
 
-	p0 = Point3D(21.3, height - 0.001, 22.7);
-	a = Vector3D(0.0, 0.0, 10.5);
-	b = Vector3D(13.0, 0.0, 0.0);
+	p0 = Point3D(width/4, height - 0.001, depth/4);
+	a = Vector3D(0.0, 0.0, depth/2);
+	b = Vector3D(width/2, 0.0, 0.0);
 	normal = Normal(0.0, -1.0, 0.0);
+
+	//p0 = Point3D(0.0, 0.0, -depth * 2);
+	//a = Vector3D(width, 0.0, 0.0);
+	//b = Vector3D(0.0, height, 0.0);
+	//normal = Normal(0.0, 0.0, 1.0);
+
 	std::shared_ptr<Rectangler> light_ptr = std::make_shared<Rectangler>(p0, a, b, normal);
 	light_ptr->SetMaterial(emissive_ptr);
 	light_ptr->SetSampler(std::make_shared<MultiJittered>(numSamples));
@@ -169,6 +247,55 @@ void World::Build()
 	ceiling_light_ptr->SetObject(light_ptr);
 	ceiling_light_ptr->SetIsShadow(true);
 	AddLight(ceiling_light_ptr);
+
+	//front light
+	p0 = Point3D(0.0, 0.0, -depth * 2);
+	a = Vector3D(width, 0.0, 0.0);
+	b = Vector3D(0.0, height, 0.0);
+	normal = Normal(0.0, 0.0, 1.0);
+
+	std::shared_ptr<Rectangler> light_ptr2 = std::make_shared<Rectangler>(p0, a, b, normal);
+	light_ptr2->SetMaterial(emissive_ptr);
+	light_ptr2->SetSampler(std::make_shared<MultiJittered>(numSamples));
+	light_ptr2->SetIsShadow(false);
+	AddObject(light_ptr);
+
+	std::shared_ptr<AreaLight> front_light_ptr = std::make_shared<AreaLight>();
+	front_light_ptr->SetObject(light_ptr2);
+	front_light_ptr->SetIsShadow(true);
+	AddLight(front_light_ptr);
+
+	//point light
+	auto light_ptr3 = std::make_shared<Directional>();
+	light_ptr3->SetScaleRadiance(2.0);
+	light_ptr3->SetColor(1.0, 0.73, 0.4);
+	light_ptr3->SetDirection(0.0f, 0.0f, 1.0f);
+	AddLight(light_ptr3);
+
+	//object
+	int modelHandle;
+	std::string fileName = "Additional_File/MMD/Tda式初音ミクV4X_Ver1.00/Tda式初音ミク.pmx";
+	//load and set model
+	modelHandle = MV1LoadModel(fileName.c_str());
+	MV1SetPosition(modelHandle, VGet(-width + width / 2, 0.0, depth / 4));
+	MV1SetScale(modelHandle, VGet(3.0f, 3.0f, 3.0f));
+	int attachIndex = MV1AttachAnim(modelHandle, 0, -1, FALSE);
+	MV1SetAttachAnimTime(modelHandle, attachIndex, 0.0f);
+
+	
+	std::shared_ptr<Matte> mmd_matte = std::make_shared<Matte>();
+	mmd_matte->SetKa(0.1);
+	mmd_matte->SetKd(0.75);
+	mmd_matte->SetCd(0.1, 0.5, 1.0);
+	
+	std::shared_ptr<Grid> mmd_ptr = std::make_shared<Grid>();
+	mmd_ptr->SetShadowAlpha(*this); //for alpha shadow
+	mmd_ptr->ReadMMDTriangles(modelHandle);
+	//mmd_ptr->SetMaterial(mmd_matte);
+	mmd_ptr->SetupCells();
+	AddObject(mmd_ptr);
+
+	MV1DeleteModel(modelHandle);
 
 	//left wall
 	std::shared_ptr<Matte> matte_ptr1 = std::make_shared<Matte>();
@@ -207,6 +334,14 @@ void World::Build()
 	matte_ptr3->SetCd(1.0);
 	matte_ptr3->SetSamples(numSamples);
 
+	std::shared_ptr<Reflective> reflective_ptr = std::make_shared<Reflective>();
+	reflective_ptr->SetKa(0);
+	reflective_ptr->SetKd(0);
+	reflective_ptr->SetCd(black);
+	reflective_ptr->SetKs(0);
+	reflective_ptr->SetKr(0.9);
+	reflective_ptr->SetCr(0.9, 1.0, 0.9);
+
 	p0 = Point3D(0.0, 0.0, depth);
 	a = Vector3D(width, 0.0, 0.0);
 	b = Vector3D(0.0, height, 0.0);
@@ -232,7 +367,7 @@ void World::Build()
 	std::shared_ptr<Rectangler> ceiling_ptr = std::make_shared<Rectangler>(p0, a, b, normal);
 	ceiling_ptr->SetMaterial(matte_ptr3);
 	AddObject(ceiling_ptr);
-
+	
 	//short box
 	//top
 	p0 = Point3D(13.0, 16.5, 6.5);
@@ -310,6 +445,7 @@ void World::Build()
 	std::shared_ptr<Rectangler> tall_side_ptr4 = std::make_shared<Rectangler>(p0, a, b);
 	tall_side_ptr4->SetMaterial(matte_ptr3);
 	AddObject(tall_side_ptr4);
+	
 }
 
 void World::AddObject(std::shared_ptr<GeometricObject> objectPtr)
@@ -376,7 +512,6 @@ ShadeRec World::HitObjects(const Ray& ray)
 	return sr;
 }
 
-
 void World::OpenWindow(const int hres, const int vres) const
 {
 	ChangeWindowMode(TRUE);
@@ -386,7 +521,7 @@ void World::OpenWindow(const int hres, const int vres) const
 	WaitKey();
 }
 
-void World::DisplayPixel(const int row, const int column, const RGBColor& rawColor) const
+void World::DisplayPixel(const int row, const int column, const RGBColor& rawColor) 
 {
 	RGBColor mappedColor;
 
@@ -408,7 +543,8 @@ void World::DisplayPixel(const int row, const int column, const RGBColor& rawCol
 	int x = column;
 	int y = mViewPlane.mVRes - row - 1;
 
-	DrawPixel(x, y, GetColor(mappedColor.mRed * 255, mappedColor.mGreen * 255, mappedColor.mBlue * 255));
+	mResult[x][y] = mappedColor;
+	//DrawPixel(x, y, GetColor(mappedColor.mRed * 255, mappedColor.mGreen * 255, mappedColor.mBlue * 255));
 }
 
 RGBColor World::MaxToOne(const RGBColor& c) const

@@ -21,6 +21,7 @@ public:
 	virtual float G(const ShadeRec& sr) const;
 	virtual float pdf(const ShadeRec& sr) const;
 	virtual bool InShadow(const Ray& ray, const ShadeRec& sr) const;
+	virtual bool InShadowAlpha(const Ray& ray, ShadeRec& sr) { return false; } //for alpha
 
 	bool GetIsShadow() { return mIsShadow; }
 	void SetIsShadow(bool shadow) { mIsShadow = shadow; }

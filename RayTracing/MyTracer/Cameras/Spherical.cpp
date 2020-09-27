@@ -65,7 +65,7 @@ Vector3D Spherical::GetDirection(const Point2D& pp, const int hRes, const int vR
 	return dir;
 }
 
-void Spherical::RenderScene(const World& w)
+void Spherical::RenderScene(World& w)
 {
 	RGBColor L;
 	ViewPlane vp(w.mViewPlane);

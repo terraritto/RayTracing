@@ -115,7 +115,17 @@ bool MeshTriangle::Shadow_hit(const Ray& ray, float& tmin) const
 		return false;
 	}
 
-	//hit
+	//hit for alpha
+	if (mShadowSr)
+	{
+		mShadowSr->mU = InterpolateU(beta, gamma);
+		mShadowSr->mV = InterpolateV(beta, gamma);
+
+		if (mMaterial->GetAlpha(*mShadowSr) <= 0.3f) {
+			return false;
+		}
+	}
+
 	tmin = t;
 
 	return true;
@@ -142,6 +152,15 @@ float MeshTriangle::InterpolateU(const float beta, const float gamma)
 	return u;
 }
 
+float MeshTriangle::InterpolateU(const float beta, const float gamma) const
+{
+	float u = (1 - beta - gamma) * mMeshPtr->mU[mIndex0]
+		+ beta * mMeshPtr->mU[mIndex1]
+		+ gamma * mMeshPtr->mU[mIndex2];
+
+	return u;
+}
+
 float MeshTriangle::InterpolateV(const float beta, const float gamma)
 {
 	float v = (1 - beta - gamma) * mMeshPtr->mV[mIndex0]
@@ -150,6 +169,15 @@ float MeshTriangle::InterpolateV(const float beta, const float gamma)
 
 	return v;
 
+}
+
+float MeshTriangle::InterpolateV(const float beta, const float gamma) const
+{
+	float v = (1 - beta - gamma) * mMeshPtr->mV[mIndex0]
+		+ beta * mMeshPtr->mV[mIndex1]
+		+ gamma * mMeshPtr->mV[mIndex2];
+
+	return v;
 }
 
 Normal MeshTriangle::GetNormal()

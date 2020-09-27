@@ -19,7 +19,7 @@ public:
 	StereoCamera& operator=(const StereoCamera& rhs);
 
 	void SetupCameras();
-	void RenderScene(const World& w) override;
+	void RenderScene(World& w) override;
 
 	void SetLeftCamera(std::shared_ptr<Camera> camera) { mLeftCameraPtr = camera; }
 	void SetRightCamera(std::shared_ptr<Camera> camera) { mRightCameraPtr = camera; }

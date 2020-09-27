@@ -28,6 +28,9 @@ public:
 	void ReadTriangles(std::string fileName, ETriangleType type);
 	void ReadUVTriangles(std::string fileName, ETriangleType type);
 
+	// to read mmd object
+	void ReadMMDTriangles(int modelHandle);
+
 	void SetupCells();
 	virtual bool hit(const Ray& ray, double& t, ShadeRec& s) override;
 	virtual bool Shadow_hit(const Ray& ray, float& tmin) const override;
@@ -44,4 +47,5 @@ private:
 	void ComputeMeshNormals();
 public:
 	std::shared_ptr<Mesh> mMesh; // for triangle
+	void SetShadowAlpha(World& w); //for alpha
 };
