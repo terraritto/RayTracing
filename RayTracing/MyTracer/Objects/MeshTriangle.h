@@ -29,6 +29,7 @@ public:
 	float InterpolateV(const float beta, const float gamma) const;
 
 	Normal GetNormal() override;
+	void SetNormal(Normal norm) { mNormal = norm; }
 	virtual BBox GetBoundingBox() const override;
 
 };

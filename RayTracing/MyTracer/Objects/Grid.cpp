@@ -287,6 +287,11 @@ void Grid::ReadTriangles(std::string fileName, ETriangleType type)
 	ReadPlyFile(fileName, type);
 }
 
+void Grid::ReadNormTriangles(std::string fileName, ETriangleType type)
+{
+	ReadNormPlyFile(fileName, type);
+}
+
 void Grid::ReadUVTriangles(std::string fileName, ETriangleType type)
 {
 	ReadUVPlyFile(fileName, type);
@@ -1001,6 +1006,191 @@ void Grid::ReadPlyFile(std::string fileName, ETriangleType type)
 			mMesh->mVertexFaces[f[1]].push_back(count);
 			mMesh->mVertexFaces[f[2]].push_back(count);
 			count++;
+			
+
+			//for rectangle
+			if (f.size() == 4) {
+				std::shared_ptr<SmoothMeshTriangle> triangle_ptr2 = std::make_shared<SmoothMeshTriangle>(mMesh, f[0], f[2], f[3]);
+				triangle_ptr2->ComputeNormal(mReverseNormal);
+				mObjects.push_back(triangle_ptr2);
+
+				mMesh->mVertexFaces[f[3]].push_back(count);
+				mMesh->mVertexFaces[f[2]].push_back(count);
+				mMesh->mVertexFaces[f[0]].push_back(count);
+				count++;
+			}
+			
+			
+		}
+		ComputeMeshNormals();
+	}
+	//---------------------
+}
+
+void Grid::ReadNormPlyFile(std::string fileName, ETriangleType type)
+{
+	//read file
+	happly::PLYData plyIn(fileName);
+
+	// exception
+	try
+	{
+		plyIn.validate();
+	}
+	catch (const std::exception & e)
+	{
+		std::cerr << e.what() << std::endl;
+		return;
+	}
+
+	//---objects---
+	//vertex
+	const std::vector<float> vertex_x = plyIn.getElement("vertex").getProperty<float>("x");
+	const std::vector<float> vertex_y = plyIn.getElement("vertex").getProperty<float>("y");
+	const std::vector<float> vertex_z = plyIn.getElement("vertex").getProperty<float>("z");
+	const std::vector<float> norm_x = plyIn.getElement("vertex").getProperty<float>("nx");
+	const std::vector<float> norm_y = plyIn.getElement("vertex").getProperty<float>("ny");
+	const std::vector<float> norm_z = plyIn.getElement("vertex").getProperty<float>("nz");
+
+
+	//face
+	std::vector<std::vector<int>> face = plyIn.getElement("face").getListProperty<int>("vertex_indices");
+
+	// num
+	int vertexNum = vertex_x.size();
+	int faceNum = face.size();
+	//---------
+
+	//---set---
+	// objects
+	mObjects.reserve(faceNum);
+	//vertex
+	for (int i = 0; i < vertexNum; i++)
+	{
+		Point3D p(vertex_x[i], vertex_y[i], vertex_z[i]);
+		mMesh->mVertices.push_back(p);
+	}
+
+	mMesh->mNumVertices = vertexNum;
+	mMesh->mNumTriangles = faceNum;
+
+	// face
+	mMesh->mVertexFaces.resize(vertexNum); // vertex size
+	//---------
+
+	//--- make triangle ---
+	if (type == ETriangleType::flat)
+	{
+		for (auto& f : face) {
+			std::shared_ptr<FlatMeshTriangle> triangle_ptr = std::make_shared<FlatMeshTriangle>(mMesh, f[0], f[1], f[2]);
+			/*
+			Normal sumNorm;
+
+			for (int i = 0; i < 3; i++)
+			{
+
+				Normal p(
+					norm_x[f[i]],
+					norm_y[f[i]],
+					norm_z[f[i]]
+				);
+				sumNorm += p;
+			}*/
+
+			auto norm0 = Vector3D(norm_x[f[0]],norm_y[f[0]],norm_z[f[0]]);
+			auto norm1 = Vector3D(norm_x[f[1]],norm_y[f[1]],norm_z[f[1]]);
+			auto norm2 = Vector3D(norm_x[f[2]],norm_y[f[2]],norm_z[f[2]]);
+
+			auto vv1 = norm1 - norm0;
+			auto vv2 = norm2 - norm1;
+			auto val = (vv1 ^ vv2);
+			val.Normalize();
+			Normal sumNorm(val);
+
+			triangle_ptr->SetNormal(sumNorm);
+
+			mObjects.push_back(triangle_ptr);
+		}
+
+		mMesh->mVertexFaces.erase(mMesh->mVertexFaces.begin(), mMesh->mVertexFaces.end());
+
+	}
+
+	if (type == ETriangleType::smooth)
+	{
+		int count = 0; //number of feces
+		for (auto& f : face)
+		{
+			std::shared_ptr<SmoothMeshTriangle> triangle_ptr = std::make_shared<SmoothMeshTriangle>(mMesh, f[0], f[1], f[2]);
+			
+			Normal sumNorm;
+
+			auto NormIndex = [f](int i) { return f[i]; };
+
+			int index = NormIndex(0);
+			sumNorm += Normal(norm_x[index], norm_y[index], norm_z[index]);
+			index = NormIndex(1);
+			sumNorm += Normal(norm_x[index], norm_y[index], norm_z[index]);
+			index = NormIndex(2);
+			sumNorm += Normal(norm_x[index], norm_y[index], norm_z[index]);
+
+
+			if (sumNorm.mPosX == 0.0 && sumNorm.mPosY == 0.0 && sumNorm.mPosZ == 0.0)
+			{
+				sumNorm.mPosY = 1.0;
+			}
+			else
+			{
+				sumNorm.Normalize();
+			}
+			
+			triangle_ptr->SetNormal(sumNorm);
+			
+			//triangle_ptr->ComputeNormal(mReverseNormal);
+			mObjects.push_back(triangle_ptr);
+
+
+			mMesh->mVertexFaces[f[0]].push_back(count);
+			mMesh->mVertexFaces[f[1]].push_back(count);
+			mMesh->mVertexFaces[f[2]].push_back(count);
+			count++;
+
+			//for triangle
+			if (f.size() == 4) {
+				std::shared_ptr<SmoothMeshTriangle> triangle_ptr2 = std::make_shared<SmoothMeshTriangle>(mMesh, f[1], f[2], f[3]);
+				triangle_ptr2->ComputeNormal(mReverseNormal);
+				mObjects.push_back(triangle_ptr2);
+
+				sumNorm = Normal(0);
+
+				index = NormIndex(3);
+				sumNorm += Normal(norm_x[index], norm_y[index], norm_z[index]);
+				index = NormIndex(0);
+				sumNorm += Normal(norm_x[index], norm_y[index], norm_z[index]);
+				index = NormIndex(1);
+				sumNorm += Normal(norm_x[index], norm_y[index], norm_z[index]);
+
+				if (sumNorm.mPosX == 0.0 && sumNorm.mPosY == 0.0 && sumNorm.mPosZ == 0.0)
+				{
+					sumNorm.mPosY = 1.0;
+				}
+				else
+				{
+					sumNorm.Normalize();
+				}
+
+				triangle_ptr->SetNormal(sumNorm);
+
+				//triangle_ptr->ComputeNormal(mReverseNormal);
+				mObjects.push_back(triangle_ptr);
+
+				mMesh->mVertexFaces[f[3]].push_back(count);
+				mMesh->mVertexFaces[f[0]].push_back(count);
+				mMesh->mVertexFaces[f[1]].push_back(count);
+				count++;
+
+			}
+
 		}
 		ComputeMeshNormals();
 	}

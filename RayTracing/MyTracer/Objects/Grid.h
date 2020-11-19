@@ -25,7 +25,8 @@ public:
 	void TessellateSmoothSphere(const int horizontalSteps, const int verticalSteps);
 
 	//to read ply files
-	void ReadTriangles(std::string fileName, ETriangleType type);
+	void ReadTriangles(std::string fileName, ETriangleType type);	
+	void ReadNormTriangles(std::string fileName, ETriangleType type);	
 	void ReadUVTriangles(std::string fileName, ETriangleType type);
 
 	// to read mmd object
@@ -43,6 +44,7 @@ private:
 	Point3D MaxCoordinates(); //compute maximum grid coordinates
 
 	void ReadPlyFile(std::string fileName, ETriangleType type);
+	void ReadNormPlyFile(std::string fileName, ETriangleType type);
 	void ReadUVPlyFile(std::string fileName, ETriangleType type);
 	void ComputeMeshNormals();
 public:
